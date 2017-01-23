@@ -26,14 +26,6 @@ module Mergometer
 
       attr_accessor :repo, :metrics
 
-      def preload
-        bar = ProgressBar.new(prs.size, :bar, :counter, :elapsed)
-        prs.each do |pr|
-          pr.preload
-          bar.increment!
-        end
-      end
-
       def fields
         headers.keys + metrics
       end
@@ -73,6 +65,17 @@ module Mergometer
 
       def items
         Octokit.search_issues("base:master repo:#{repo} type:pr is:merged").items
+      end
+
+      def preload
+        prs.each do |pr|
+          pr.preload
+          progress_bar.increment!
+        end
+      end
+
+      def progress_bar
+        @_progress_bar ||= ProgressBar.new(prs.size, :bar, :counter, :elapsed)
       end
   end
 end
