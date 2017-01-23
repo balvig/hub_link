@@ -1,4 +1,6 @@
 class Ranking
+  require "facets/math"
+
   ACTIVITY_LOWER_LIMIT = 15
 
   attr_accessor :user
@@ -8,35 +10,44 @@ class Ranking
     @prs = prs
   end
 
-  def total_count
-    prs.size
+  def eligible_pr_count
+    eligible_prs.size
   end
 
-  def formatted_merge_time
-    median_merge_time.in_words
-  end
-
-  def formatted_slowest_merge
-    "##{slowest_merge.number} " + "(#{slowest_merge.merge_time.in_words})"
-  end
-
-  def median_merge_time
-    @_median_merge_time ||= Math.median prs.map(&:merge_time)
+  def counts
+    "#{eligible_pr_count} (#{prs.size})"
   end
 
   def inactive?
-    total_count < ACTIVITY_LOWER_LIMIT
+    eligible_pr_count < ACTIVITY_LOWER_LIMIT
+  end
+
+  def worst(metric)
+    prs.max_by(&metric)
+  end
+
+  # Metrics
+  def comment_count
+    @_comment_count ||= calculate_metric(:comment_count)
+  end
+
+  def merge_time
+    @_merge_time ||= calculate_metric(:merge_time)
+  end
+
+  def changes
+    @_changes ||= calculate_metric(:changes)
   end
 
   private
 
     attr_accessor :prs
 
-    def prs
-      @_prs ||= @prs.reject(&:quick_fix?)
+    def calculate_metric(metric)
+      Math.median eligible_prs.map(&metric)
     end
 
-    def slowest_merge
-      @_slowest_merge ||= prs.max_by(&:merge_time)
+    def eligible_prs
+      @_eligible_prs ||= prs.reject(&:quick_fix?)
     end
 end
