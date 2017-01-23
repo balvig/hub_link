@@ -6,6 +6,6 @@ require "mergometer/ranking"
 require "mergometer/report"
 
 module Mergometer
-  Configuration.new.apply
-  Report.new("cookpad/global-web", metric: :comment_count).render
+  Configuration.new(cache_time: 24 * 3600).apply
+  Report.new("cookpad/global-web", metrics: %i(comment_count merge_time)).render
 end

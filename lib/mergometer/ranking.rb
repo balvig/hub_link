@@ -22,10 +22,6 @@ class Ranking
     eligible_pr_count < ACTIVITY_LOWER_LIMIT
   end
 
-  def worst(metric)
-    prs.max_by(&metric)
-  end
-
   # Metrics
   def comment_count
     @_comment_count ||= calculate_metric(:comment_count)
@@ -33,10 +29,6 @@ class Ranking
 
   def merge_time
     @_merge_time ||= calculate_metric(:merge_time)
-  end
-
-  def changes
-    @_changes ||= calculate_metric(:changes)
   end
 
   private

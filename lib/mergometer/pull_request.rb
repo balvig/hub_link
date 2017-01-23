@@ -19,30 +19,34 @@ class PullRequest
 
   # Metrics
   def comment_count
-    @_comment_count ||= data.comments + review_comments.size
+    @_comment_count ||= data.comments + comment_data.size
   end
 
   def merge_time
-    @_merge_time ||= data.closed_at - data.created_at
+    @_merge_time ||= (merge_time_in_seconds / 60 / 60).round
   end
 
-  def changes
-    @_changes ||= full_data.additions + full_data.deletions
+  def preload
+    comment_data && pr_data
   end
 
   private
 
     attr_accessor :data
 
-    def review_comments
-      @_review_comments ||= Octokit.get(full_data.review_comments_url)
+    def merge_time_in_seconds
+      data.closed_at - data.created_at
     end
 
-    def full_data
-      @_full_data ||= Octokit.get(api_url)
+    def changes
+      @_changes ||= pr_data.additions + pr_data.deletions
     end
 
-    def api_url
-      data.pull_request.url
+    def comment_data
+      @_comment_data ||= Octokit.get(pr_data.review_comments_url)
+    end
+
+    def pr_data
+      @_pr_data ||= Octokit.get(data.pull_request.url)
     end
 end

@@ -3,13 +3,13 @@ module Mergometer
     require "hirb"
     require "progress_bar"
 
-    def initialize(repo, metric:)
+    def initialize(repo, metrics:)
       @repo = repo
-      @metric = metric
+      @metrics = metrics
     end
 
     def render
-      puts "Metric: #{metric}"
+      puts "Metrics: #{metrics.join(", ")}"
       preload
       puts Hirb::Helpers::AutoTable.render(
         rankings,
@@ -24,18 +24,18 @@ module Mergometer
 
     private
 
-      attr_accessor :repo, :metric
+      attr_accessor :repo, :metrics
 
       def preload
         bar = ProgressBar.new(prs.size, :bar, :counter, :elapsed)
         prs.each do |pr|
-          pr.public_send(metric)
+          pr.preload
           bar.increment!
         end
       end
 
       def fields
-        headers.keys + [metric]
+        headers.keys + metrics
       end
 
       def headers
@@ -59,7 +59,7 @@ module Mergometer
 
       def sorted_rankings
         eligible_rankings.sort_by do |ranking|
-          [ranking.send(metric), -ranking.eligible_pr_count]
+          [ranking.send(metrics.first), -ranking.eligible_pr_count]
         end
       end
 

@@ -4,12 +4,18 @@ module Mergometer
     require "faraday_middleware"
     require "active_support"
 
+    def initialize(cache_time: 3600)
+      @cache_time = cache_time
+    end
+
     def apply
       Octokit.middleware = middleware
       Octokit.auto_paginate = true
     end
 
     private
+
+      attr_reader :cache_time
 
       def middleware
         Faraday::RackBuilder.new do |builder|
@@ -21,7 +27,7 @@ module Mergometer
       end
 
       def cache
-        ActiveSupport::Cache::FileStore.new "tmp/cache", expires_in: 3600 # one hour
+        ActiveSupport::Cache::FileStore.new "tmp/cache", expires_in: cache_time
       end
 
       def logger
