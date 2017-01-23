@@ -6,6 +6,7 @@ module Mergometer
 
     def apply
       Octokit.middleware = middleware
+      Octokit.auto_paginate = true
     end
 
     private

@@ -39,7 +39,7 @@ class PullRequest
     end
 
     def full_data
-      @_full_data = Octokit.get(api_url)
+      @_full_data ||= Octokit.get(api_url)
     end
 
     def api_url
