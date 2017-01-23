@@ -2,7 +2,7 @@ module Mergometer
   class Configuration
     require "faraday/detailed_logger"
     require "faraday_middleware"
-    require "active_support/cache"
+    require "active_support"
 
     def apply
       Octokit.middleware = middleware

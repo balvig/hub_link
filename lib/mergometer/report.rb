@@ -3,7 +3,7 @@ module Mergometer
     require "hirb"
 
     ITEMS_PER_PAGE = 100
-    PAGES = 2
+    PAGES = 10
 
     def initialize(repo, metric:)
       @repo = repo
