@@ -32,8 +32,7 @@ module Mergometer
 
       def headers
         {
-          user: "Name",
-          counts: "PR counts"
+          user: "Name"
         }
       end
 
@@ -50,9 +49,11 @@ module Mergometer
       end
 
       def sorted_rankings
-        eligible_rankings.sort_by do |ranking|
-          [ranking.send(metrics.first), -ranking.eligible_pr_count]
-        end
+        eligible_rankings.sort_by(&sort_field)
+      end
+
+      def sort_field
+        metrics.last
       end
 
       def eligible_rankings

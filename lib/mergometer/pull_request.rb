@@ -1,5 +1,7 @@
 class PullRequest
   QUICK_FIX_CUTOFF = 5
+  LONG_RUNNING_LENGTH = 4 * 24 * 60 * 60 # Days
+  HEAVILY_COMMENTED_COUNT = 10
 
   def initialize(data)
     @data = data
@@ -13,11 +15,24 @@ class PullRequest
     data.user.login
   end
 
+  # Metrics
+
+  def problematic?
+    long_running? || heavily_commented?
+  end
+
   def quick_fix?
     changes < QUICK_FIX_CUTOFF
   end
 
-  # Metrics
+  def long_running?
+    merge_time_in_seconds > LONG_RUNNING_LENGTH
+  end
+
+  def heavily_commented?
+    comment_count > HEAVILY_COMMENTED_COUNT
+  end
+
   def comment_count
     @_comment_count ||= data.comments + comment_data.size
   end
