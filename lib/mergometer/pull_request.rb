@@ -1,7 +1,7 @@
 class PullRequest
-  QUICK_FIX_CUTOFF = 5
-  LONG_RUNNING_LENGTH = 4 * 24 * 60 * 60 # Days
-  HEAVILY_COMMENTED_COUNT = 10
+  QUICK_FIX_CUTOFF = 6 # Changes
+  LONG_RUNNING_LENGTH = 5 * 24 * 60 * 60 # Days
+  HEAVILY_COMMENTED_COUNT = 20 # Comments
 
   def initialize(data)
     @data = data
@@ -18,7 +18,8 @@ class PullRequest
   # Metrics
 
   def problematic?
-    long_running? || heavily_commented?
+    #long_running? || heavily_commented?
+    heavily_commented?
   end
 
   def quick_fix?
@@ -45,16 +46,17 @@ class PullRequest
     comment_data && pr_data
   end
 
+  def changes
+    @_changes ||= pr_data.additions + pr_data.deletions
+  end
+
+
   private
 
     attr_accessor :data
 
     def merge_time_in_seconds
       data.closed_at - data.created_at
-    end
-
-    def changes
-      @_changes ||= pr_data.additions + pr_data.deletions
     end
 
     def comment_data

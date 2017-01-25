@@ -19,7 +19,7 @@ class Ranking
   end
 
   def problem_ratio
-    @_problem_ratio ||= problematic_count / eligible_pr_count.to_f
+    @_problem_ratio ||= ((problematic_count / eligible_pr_count.to_f) * 100).round(2)
   end
 
   def quick_fix_ratio
@@ -54,6 +54,10 @@ class Ranking
 
   def merge_time
     @_merge_time ||= calculate_metric(:merge_time)
+  end
+
+  def changes
+    @_changes ||= calculate_metric(:changes)
   end
 
   private
