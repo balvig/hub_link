@@ -15,10 +15,13 @@ class PullRequest
     data.user.login
   end
 
+  def week
+    data.created_at.beginning_of_week
+  end
+
   # Metrics
 
   def problematic?
-    #long_running? || heavily_commented?
     heavily_commented?
   end
 
