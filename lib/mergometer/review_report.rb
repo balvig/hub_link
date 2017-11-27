@@ -2,7 +2,19 @@ require "mergometer/review_ranking"
 
 module Mergometer
   class ReviewReport < Report
+    def render
+      super
+      puts "PRs awaiting review (#{prs_awaiting_review.size}): " + prs_awaiting_review.join(", ")
+    end
+
     private
+
+
+      def prs_awaiting_review
+        prs.find_all(&:unreviewed?).map do |pr|
+          "##{pr.number}"
+        end
+      end
 
       def fields
         [:user, :reviews]

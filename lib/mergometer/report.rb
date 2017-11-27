@@ -18,7 +18,7 @@ module Mergometer
         description: false
       )
 
-      puts "Total number of PRs checked: #{prs.size}"
+      puts "Total number of PRs checked: #{prs.size} (#{filter})"
     end
 
     private

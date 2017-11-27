@@ -53,6 +53,14 @@ class PullRequest
     @_changes ||= pr_data.additions + pr_data.deletions
   end
 
+  def unreviewed?
+    open? && reviewers.empty?
+  end
+
+  def open?
+    data.state == "open"
+  end
+
   def reviewers
     @_reviewers ||= Octokit.pull_request_reviews(repo, number).map(&:user).map(&:login).uniq - %w(houndci-bot)
   end
@@ -71,10 +79,6 @@ class PullRequest
 
     def pr_data
       @_pr_data ||= Octokit.get(data.pull_request.url)
-    end
-
-    def number
-      pr_data.number
     end
 
     def repo
