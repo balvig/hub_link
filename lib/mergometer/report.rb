@@ -1,3 +1,4 @@
+require "progress_bar"
 require "mergometer/pull_request"
 
 module Mergometer
@@ -9,6 +10,7 @@ module Mergometer
     end
 
     def render
+      preload
       puts Hirb::Helpers::AutoTable.render(
         entries,
         unicode: true,
@@ -41,6 +43,17 @@ module Mergometer
 
       def items
         Octokit.search_issues(filter).items
+      end
+
+      def preload
+        prs.each do |pr|
+          pr.preload
+          progress_bar.increment!
+        end
+      end
+
+      def progress_bar
+        @_progress_bar ||= ProgressBar.new(prs.size, :bar, :counter, :elapsed)
       end
   end
 end

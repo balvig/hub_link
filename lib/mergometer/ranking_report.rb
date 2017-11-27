@@ -1,6 +1,5 @@
 require "mergometer/report"
 require "mergometer/ranking"
-require "progress_bar"
 
 module Mergometer
   class RankingReport < Report
@@ -8,7 +7,6 @@ module Mergometer
 
     def render
       puts "Metrics: #{METRICS.join(", ")}"
-      preload
       super
     end
 
@@ -42,17 +40,6 @@ module Mergometer
         prs.group_by(&:user).map do |user, user_prs|
           Ranking.new(user: user, prs: user_prs, repo: repo)
         end
-      end
-
-      def preload
-        prs.each do |pr|
-          pr.preload
-          progress_bar.increment!
-        end
-      end
-
-      def progress_bar
-        @_progress_bar ||= ProgressBar.new(prs.size, :bar, :counter, :elapsed)
       end
   end
 end

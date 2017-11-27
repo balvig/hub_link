@@ -46,13 +46,16 @@ class PullRequest
   end
 
   def preload
-    comment_data && pr_data
+    pr_data
   end
 
   def changes
     @_changes ||= pr_data.additions + pr_data.deletions
   end
 
+  def reviewers
+    @_reviewers ||= Octokit.pull_request_reviews(repo, number).map(&:user).map(&:login).uniq
+  end
 
   private
 
@@ -68,5 +71,13 @@ class PullRequest
 
     def pr_data
       @_pr_data ||= Octokit.get(data.pull_request.url)
+    end
+
+    def number
+      pr_data.number
+    end
+
+    def repo
+      pr_data.base.repo.full_name
     end
 end
