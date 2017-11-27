@@ -46,7 +46,7 @@ class PullRequest
   end
 
   def preload
-    pr_data
+    reviewers && pr_data
   end
 
   def changes
@@ -54,7 +54,7 @@ class PullRequest
   end
 
   def reviewers
-    @_reviewers ||= Octokit.pull_request_reviews(repo, number).map(&:user).map(&:login).uniq
+    @_reviewers ||= Octokit.pull_request_reviews(repo, number).map(&:user).map(&:login).uniq - %w(houndci-bot)
   end
 
   private
