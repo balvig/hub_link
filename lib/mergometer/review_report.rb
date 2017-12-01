@@ -21,7 +21,7 @@ module Mergometer
       end
 
       def filter
-        "repo:#{repo} type:pr created:>=#{3.weeks.ago.to_date}"
+        "repo:#{repo} type:pr created:>=#{1.week.ago.to_date}"
       end
 
       def entries
