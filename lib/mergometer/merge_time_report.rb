@@ -7,7 +7,7 @@ module Mergometer
     private
 
       def fields
-        [:title, :additions, :time_to_first_review]
+        [:title, :user, :additions, :merge_time, :time_to_first_review]
       end
 
       def filter
