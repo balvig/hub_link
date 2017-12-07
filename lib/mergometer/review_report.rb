@@ -24,6 +24,10 @@ module Mergometer
         "repo:#{repo} type:pr created:>=#{1.week.ago.to_date}"
       end
 
+      def fields_to_preload
+        %i(reviewers pr_data)
+      end
+
       def entries
         @_entries ||= sorted_rankings
       end

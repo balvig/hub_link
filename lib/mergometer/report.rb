@@ -37,6 +37,10 @@ module Mergometer
         "base:master repo:#{repo} type:pr is:merged"
       end
 
+      def fields_to_preload
+        %i(pr_data)
+      end
+
       def prs
         @_prs ||= items.map { |item| PullRequest.new(item) }
       end
@@ -47,7 +51,9 @@ module Mergometer
 
       def preload
         prs.each do |pr|
-          pr.preload
+          fields_to_preload.each do |field|
+            pr.send(field)
+          end
           progress_bar.increment!
         end
       end

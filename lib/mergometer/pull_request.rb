@@ -45,10 +45,6 @@ class PullRequest
     @_merge_time ||= (merge_time_in_seconds / 60 / 60).round
   end
 
-  def preload
-    reviewers && pr_data
-  end
-
   def changes
     @_changes ||= pr_data.additions + pr_data.deletions
   end
