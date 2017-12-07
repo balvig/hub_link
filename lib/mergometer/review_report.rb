@@ -21,7 +21,7 @@ module Mergometer
       end
 
       def filter
-        "repo:#{repo} type:pr created:>=#{1.week.ago.to_date}"
+        "repo:#{repo} type:pr updated:>=#{1.week.ago.to_date}"
       end
 
       def fields_to_preload
@@ -29,18 +29,10 @@ module Mergometer
       end
 
       def entries
-        @_entries ||= sorted_rankings
-      end
-
-      def sorted_rankings
-        rankings.sort_by(&:reviews).reverse
+        rankings
       end
 
       def rankings
-        @_rankings ||= build_rankings
-      end
-
-      def build_rankings
         review_data.map do |user, reviews|
           ReviewRanking.new(user: user, reviews: reviews)
         end

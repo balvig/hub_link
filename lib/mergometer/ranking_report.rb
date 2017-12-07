@@ -3,7 +3,7 @@ require "mergometer/ranking"
 
 module Mergometer
   class RankingReport < Report
-    METRICS = %i(eligible_pr_count comment_count changes heavily_commented_count problem_ratio num_of_given_reviews)
+    METRICS = %i(eligible_pr_count comment_count additions heavily_commented_count problem_ratio num_of_given_reviews)
 
     def render
       puts "Metrics: #{METRICS.join(", ")}"
@@ -17,11 +17,7 @@ module Mergometer
       end
 
       def entries
-        @_entries ||= sorted_rankings
-      end
-
-      def sorted_rankings
-        eligible_rankings.sort_by(&sort_field).reverse
+        eligible_rankings
       end
 
       def eligible_rankings

@@ -12,7 +12,7 @@ module Mergometer
     def render
       preload
       puts Hirb::Helpers::AutoTable.render(
-        entries,
+        sorted_entries,
         unicode: true,
         fields: fields,
         description: false
@@ -29,8 +29,16 @@ module Mergometer
         raise "Implement fields method"
       end
 
+      def sort_field
+        fields.last
+      end
+
+      def sorted_entries
+        entries.sort_by(&sort_field).reverse
+      end
+
       def entries
-        raise "Implement entries method"
+        prs
       end
 
       def filter
