@@ -53,11 +53,15 @@ module Mergometer
     end
 
     def merge_time
-      TimeData.new(merge_time_in_seconds)
+      #TimeData.new(merge_time_in_seconds)
+      return if merge_time_in_seconds.blank?
+      (merge_time_in_seconds / 60 / 60).round
     end
 
     def time_to_first_review
-      TimeData.new(time_to_first_review_in_seconds)
+      return if time_to_first_review_in_seconds.blank?
+      (time_to_first_review_in_seconds / 60 / 60).round
+      #TimeData.new(time_to_first_review_in_seconds)
     end
 
     def unreviewed?

@@ -16,13 +16,21 @@ module Mergometer
       end
     end
 
+    def to_i
+      in_hours.to_i
+    end
+
+    def to_f
+      in_hours.to_f
+    end
+
     def blank?
       !seconds
     end
 
     def <=>(other)
-      return unless other.is_a?(TimeData)
-      seconds.to_i <=> other.seconds.to_i
+      return unless other.respond_to?(:to_i)
+      to_i <=> other.to_i
     end
 
     private
