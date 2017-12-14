@@ -4,7 +4,7 @@ module Mergometer
   class MergeTimeReport < Report
     def render
       preload
-      %i(time_to_first_review).each do |field|
+      %i(merge_time).each do |field|
         y_axis = entries.map(&:additions)
         x_axis = entries.map(&field)
         graph.data(field, x_axis, y_axis)
@@ -20,7 +20,7 @@ module Mergometer
 
     def entries
       super.reject do |pr|
-        pr.time_to_first_review.blank? || pr.additions > 10000 || pr.time_to_first_review > 200
+        pr.time_to_first_review.blank? || pr.additions > 1000 || pr.time_to_first_review > 200
       end
     end
 
