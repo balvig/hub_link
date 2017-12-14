@@ -8,6 +8,10 @@ module Mergometer
         @prs = prs
       end
 
+      def pr_count
+        prs.size
+      end
+
       def median_merge_time
         Math.median prs.map(&:merge_time)
       end

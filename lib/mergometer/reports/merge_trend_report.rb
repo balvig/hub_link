@@ -6,10 +6,11 @@ module Mergometer
     class MergeTrendReport < Report
       def render
         graph.labels = entries.map do |entry|
-          entry.date.strftime("%B")
+          entry.date.strftime("%b")
         end.map.with_index { |x, i| [i, x] }.to_h
 
         graph.data("Merge Time", entries.map(&:median_merge_time))
+        graph.data("Num of merged PRs", entries.map(&:pr_count))
 
         graph.write("merge_trend.png")
       end
@@ -20,10 +21,6 @@ module Mergometer
           @_graph ||= Gruff::Line.new(800)
         end
 
-        def fields_to_preload
-          []
-        end
-
         def entries
           super.sort_by(&:month).group_by(&:month).map do |date, prs|
             MergeTrendReportEntry.new(date, prs)
@@ -31,7 +28,7 @@ module Mergometer
         end
 
         def filter
-          "repo:#{repo} type:pr is:merged created:>=#{24.weeks.ago.to_date}"
+          "repo:#{repo} type:pr is:merged created:>=#{12.weeks.ago.beginning_of_month.to_date}"
         end
     end
   end
