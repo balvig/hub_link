@@ -72,6 +72,10 @@ module Mergometer
       @_reviewers ||= reviews.map(&:user).map(&:login).uniq
     end
 
+    def month
+      data.created_at.beginning_of_month
+    end
+
     private
 
     attr_accessor :data

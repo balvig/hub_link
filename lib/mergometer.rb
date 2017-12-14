@@ -18,5 +18,5 @@ module Mergometer
     exit
   end
 
-  report_type.new("cookpad/global-web").render
+  report_type.new("cookpad/global-web").run
 end

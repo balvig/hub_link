@@ -9,21 +9,25 @@ module Mergometer
       @repo = repo
     end
 
-    def render
+    def run
       preload
-      puts Hirb::Helpers::AutoTable.render(
-        sorted_entries,
-        unicode: true,
-        fields: fields,
-        description: false
-      )
-
-      puts "Total number of PRs checked: #{prs.size} (#{filter})"
+      render
     end
 
     private
 
       attr_accessor :repo
+
+      def render
+        puts Hirb::Helpers::AutoTable.render(
+          sorted_entries,
+          unicode: true,
+          fields: fields,
+          description: false
+        )
+
+        puts "Total number of PRs checked: #{prs.size} (#{filter})"
+      end
 
       def fields
         raise "Implement fields method"
@@ -46,7 +50,7 @@ module Mergometer
       end
 
       def fields_to_preload
-        %i(pr_data)
+        []
       end
 
       def prs

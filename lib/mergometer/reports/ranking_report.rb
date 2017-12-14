@@ -13,6 +13,10 @@ module Mergometer
 
       private
 
+        def fields_to_preload
+          fields
+        end
+
         def fields
           [:user] + METRICS
         end

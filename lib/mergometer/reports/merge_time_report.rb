@@ -5,7 +5,6 @@ module Mergometer
   module Reports
     class MergeTimeReport < Report
       def render
-        preload
         %i(merge_time).each do |field|
           y_axis = entries.map(&:additions)
           x_axis = entries.map(&field)

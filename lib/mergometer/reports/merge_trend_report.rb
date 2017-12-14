@@ -4,17 +4,29 @@ require "mergometer/reports/merge_trend_report_entry"
 module Mergometer
   module Reports
     class MergeTrendReport < Report
+      def render
+        graph.labels = entries.map do |entry|
+          entry.date.strftime("%B")
+        end.map.with_index { |x, i| [i, x] }.to_h
+
+        graph.data("Merge Time", entries.map(&:median_merge_time))
+
+        graph.write("merge_trend.png")
+      end
+
       private
 
-        def fields
-          %i(date median_merge_time)
+        def graph
+          @_graph ||= Gruff::Line.new(800)
+        end
+
+        def fields_to_preload
+          []
         end
 
         def entries
-          super.map do |pr|
-            pr.group_by.created_at.to_date do |date, prs|
-              MergeTrendReportEntry.new(date, prs)
-            end
+          super.sort_by(&:month).group_by(&:month).map do |date, prs|
+            MergeTrendReportEntry.new(date, prs)
           end
         end
 
