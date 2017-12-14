@@ -2,6 +2,12 @@
 
 Tech OKR Metrics from GitHub
 
+## Installing dependencies
+
+```
+brew install imagemagick@6 && brew link imagemagick@6 --force
+```
+
 ## Usage
 
 ```

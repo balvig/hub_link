@@ -4,20 +4,19 @@ require "octokit"
 require "mergometer/version"
 require "mergometer/configuration"
 
-path = File.expand_path("../mergometer/reports/**/*.rb", __FILE__)
-Dir[path].each { |f| require f }
-
-#require "mergometer/ranking_report"
-#require "mergometer/weekly_report"
-#require "mergometer/review_report"
-#require "mergometer/merge_time_report"
-#require "mergometer/merge_trend_report"
+reports_path = File.expand_path("../mergometer/reports/**/*.rb", __FILE__)
+Dir[reports_path].each { |f| require f }
 
 module Mergometer
   Configuration.new(cache_time: 72 * 3600).apply
-  # RankingReport.new("cookpad/global-web").render
-  # WeeklyReport.new("cookpad/global-web").render
-  # ReviewReport.new("cookpad/global-web").render
-  # MergeTimeReport.new("cookpad/global-web").render
-  MergeTrendReport.new("cookpad/global-web").render
+
+  begin
+    report_type = Object.const_get("Mergometer::Reports::#{ARGV.first}")
+  rescue NameError
+    reports = Mergometer::Reports.constants.select { |c| c.to_s.end_with?("Report") }
+    puts "Report not found, must be one of: \n\n" + reports.join("\n")
+    exit
+  end
+
+  report_type.new("cookpad/global-web").render
 end

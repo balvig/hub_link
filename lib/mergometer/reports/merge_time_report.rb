@@ -2,31 +2,33 @@ require "mergometer/report"
 require "gruff"
 
 module Mergometer
-  class MergeTimeReport < Report
-    def render
-      preload
-      %i(merge_time).each do |field|
-        y_axis = entries.map(&:additions)
-        x_axis = entries.map(&field)
-        graph.data(field, x_axis, y_axis)
+  module Reports
+    class MergeTimeReport < Report
+      def render
+        preload
+        %i(merge_time).each do |field|
+          y_axis = entries.map(&:additions)
+          x_axis = entries.map(&field)
+          graph.data(field, x_axis, y_axis)
+        end
+        graph.write("/www/images/dot.png")
       end
-      graph.write("/www/images/dot.png")
-    end
 
-    private
+      private
 
-    def graph
-      @_graph ||= Gruff::Scatter.new(800)
-    end
+        def graph
+          @_graph ||= Gruff::Scatter.new(800)
+        end
 
-    def entries
-      super.reject do |pr|
-        pr.time_to_first_review.blank? || pr.additions > 1000 || pr.time_to_first_review > 200
-      end
-    end
+        def entries
+          super.reject do |pr|
+            pr.time_to_first_review.blank? || pr.additions > 1000 || pr.time_to_first_review > 200
+          end
+        end
 
-    def filter
-      "repo:#{repo} type:pr is:merged created:>=#{24.weeks.ago.to_date}"
+        def filter
+          "repo:#{repo} type:pr is:merged created:>=#{24.weeks.ago.to_date}"
+        end
     end
   end
 end

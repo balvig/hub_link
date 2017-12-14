@@ -2,40 +2,42 @@ require "mergometer/report"
 require "mergometer/reports/ranking_report_entry"
 
 module Mergometer
-  class RankingReport < Report
-    METRICS = %i(eligible_pr_count comment_count additions heavily_commented_count problem_ratio num_of_given_reviews)
+  module Reports
+    class RankingReport < Report
+      METRICS = %i(eligible_pr_count comment_count additions heavily_commented_count problem_ratio num_of_given_reviews)
 
-    def render
-      puts "Metrics: #{METRICS.join(", ")}"
-      super
-    end
-
-    private
-
-      def fields
-        [:user] + METRICS
+      def render
+        puts "Metrics: #{METRICS.join(", ")}"
+        super
       end
 
-      def entries
-        eligible_rankings
-      end
+      private
 
-      def eligible_rankings
-        all_rankings.reject(&:inactive?)
-      end
-
-      def sort_field
-        METRICS.first
-      end
-
-      def all_rankings
-        @_all_rankings ||= build_rankings
-      end
-
-      def build_rankings
-        prs.group_by(&:user).map do |user, user_prs|
-          RankingReportEntry.new(user: user, prs: user_prs, repo: repo)
+        def fields
+          [:user] + METRICS
         end
-      end
+
+        def entries
+          eligible_rankings
+        end
+
+        def eligible_rankings
+          all_rankings.reject(&:inactive?)
+        end
+
+        def sort_field
+          METRICS.first
+        end
+
+        def all_rankings
+          @_all_rankings ||= build_rankings
+        end
+
+        def build_rankings
+          prs.group_by(&:user).map do |user, user_prs|
+            RankingReportEntry.new(user: user, prs: user_prs, repo: repo)
+          end
+        end
+    end
   end
 end
