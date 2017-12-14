@@ -1,5 +1,5 @@
 require "mergometer/report"
-require "mergometer/ranking"
+require "mergometer/reports/ranking_report_entry"
 
 module Mergometer
   class RankingReport < Report
@@ -34,7 +34,7 @@ module Mergometer
 
       def build_rankings
         prs.group_by(&:user).map do |user, user_prs|
-          Ranking.new(user: user, prs: user_prs, repo: repo)
+          RankingReportEntry.new(user: user, prs: user_prs, repo: repo)
         end
       end
   end

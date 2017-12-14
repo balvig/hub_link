@@ -1,4 +1,5 @@
-require "mergometer/review_ranking"
+require "mergometer/report"
+require "mergometer/reports/review_report_entry"
 
 module Mergometer
   class ReviewReport < Report
@@ -29,12 +30,8 @@ module Mergometer
       end
 
       def entries
-        rankings
-      end
-
-      def rankings
         review_data.map do |user, reviews|
-          ReviewRanking.new(user: user, reviews: reviews)
+          ReviewReportEntry.new(user: user, reviews: reviews)
         end
       end
 

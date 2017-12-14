@@ -1,5 +1,5 @@
 require "mergometer/report"
-require "mergometer/weekly_entry"
+require "mergometer/reports/weekly_report_entry"
 
 module Mergometer
   class WeeklyReport < Report
@@ -24,7 +24,7 @@ module Mergometer
 
       def build_entries
         prs.group_by(&:week).map do |week, weekly_prs|
-          WeeklyEntry.new(week: week, prs: weekly_prs)
+          WeeklyReportEntry.new(week: week, prs: weekly_prs)
         end
       end
 

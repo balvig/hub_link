@@ -1,5 +1,5 @@
 module Mergometer
-  class WeeklyEntry
+  class WeeklyReportEntry
 
     attr_accessor :week
 

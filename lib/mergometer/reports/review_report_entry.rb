@@ -1,5 +1,5 @@
 module Mergometer
-  class ReviewRanking
+  class ReviewReportEntry
     attr_accessor :user, :reviews
 
     def initialize(user:, reviews:)

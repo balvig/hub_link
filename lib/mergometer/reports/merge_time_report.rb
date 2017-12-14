@@ -1,3 +1,4 @@
+require "mergometer/report"
 require "gruff"
 
 module Mergometer

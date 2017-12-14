@@ -1,6 +1,5 @@
 module Mergometer
-  class Ranking
-    require "facets/math"
+  class RankingReportEntry
 
     ACTIVITY_LOWER_LIMIT = 15
 
