@@ -9,13 +9,15 @@ module Mergometer
           entry.date.strftime("%b")
         end.map.with_index { |x, i| [i, x] }.to_h
 
-        graph.data("Merge Time", entries.map(&:median_merge_time))
-        graph.data("Num of merged PRs", entries.map(&:pr_count))
-
+        graph.data("Time to approval", entries.map(&:median_approval_time))
         graph.write("merge_trend.png")
       end
 
       private
+
+        def fields_to_preload
+          %i(approval_time)
+        end
 
         def graph
           @_graph ||= Gruff::Line.new(800)
@@ -28,7 +30,7 @@ module Mergometer
         end
 
         def filter
-          "repo:#{repo} type:pr is:merged created:>=#{12.weeks.ago.beginning_of_month.to_date}"
+          "repo:#{repo} type:pr is:merged review:approved created:>=#{52.weeks.ago.beginning_of_month.to_date}"
         end
     end
   end

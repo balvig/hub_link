@@ -12,8 +12,8 @@ module Mergometer
         prs.size
       end
 
-      def median_merge_time
-        Math.median prs.map(&:merge_time)
+      def median_approval_time
+        Math.median prs.map(&:approval_time)
       end
 
       private

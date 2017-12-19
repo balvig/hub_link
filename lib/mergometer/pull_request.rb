@@ -1,3 +1,5 @@
+require "mergometer/core_ext/float"
+
 module Mergometer
   class PullRequest
     QUICK_FIX_CUTOFF = 6 # Changes
@@ -21,7 +23,11 @@ module Mergometer
     end
 
     def week
-      data.created_at.beginning_of_week
+      created_at.beginning_of_week
+    end
+
+    def month
+      created_at.beginning_of_month
     end
 
     # Metrics
@@ -51,13 +57,15 @@ module Mergometer
     end
 
     def merge_time
-      return if merge_time_in_seconds.blank?
-      (merge_time_in_seconds / 60 / 60).round
+      (data.closed_at - created_at).in_hours
     end
 
     def time_to_first_review
-      return if time_to_first_review_in_seconds.blank?
-      (time_to_first_review_in_seconds / 60 / 60).round
+      (reviews.first.submitted_at - created_at).in_hours
+    end
+
+    def approval_time
+      (first_approval.submitted_at - created_at).in_hours
     end
 
     def unreviewed?
@@ -72,43 +80,38 @@ module Mergometer
       @_reviewers ||= reviews.map(&:user).map(&:login).uniq
     end
 
-    def month
-      data.created_at.beginning_of_month
-    end
-
     private
 
-    attr_accessor :data
+      attr_accessor :data
 
-    def reviews
-      Octokit.pull_request_reviews(repo, number).reject do |review|
-        review.user.login == "houndci-bot"
+      def created_at
+        data.created_at
       end
-    end
 
-    def changes
-      @_changes ||= pr_data.additions + pr_data.deletions
-    end
+      def reviews
+        Octokit.pull_request_reviews(repo, number).reject do |review|
+          review.user.login == "houndci-bot"
+        end
+      end
 
-    def time_to_first_review_in_seconds
-      return if reviews.empty?
-      reviews.first.submitted_at - data.created_at
-    end
+      def changes
+        @_changes ||= pr_data.additions + pr_data.deletions
+      end
 
-    def merge_time_in_seconds
-      data.closed_at - data.created_at
-    end
+      def first_approval
+        reviews.find { |r| r.state == "APPROVED" }
+      end
 
-    def comment_data
-      @_comment_data ||= Octokit.get(pr_data.review_comments_url)
-    end
+      def comment_data
+        @_comment_data ||= Octokit.get(pr_data.review_comments_url)
+      end
 
-    def pr_data
-      @_pr_data ||= Octokit.get(data.pull_request.url)
-    end
+      def pr_data
+        @_pr_data ||= Octokit.get(data.pull_request.url)
+      end
 
-    def repo
-      pr_data.base.repo.full_name
-    end
+      def repo
+        pr_data.base.repo.full_name
+      end
   end
 end
