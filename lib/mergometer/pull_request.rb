@@ -68,12 +68,8 @@ module Mergometer
       (first_approval.submitted_at - created_at).in_hours
     end
 
-    def unreviewed?
-      open? && reviewers.empty?
-    end
-
-    def open?
-      data.state == "open"
+    def awaiting_review?
+      !wip? && open? && reviewers.empty?
     end
 
     def reviewers
@@ -83,6 +79,14 @@ module Mergometer
     private
 
       attr_accessor :data
+
+      def open?
+        data.state == "open"
+      end
+
+      def wip?
+        title.include?("[WIP]")
+      end
 
       def created_at
         data.created_at

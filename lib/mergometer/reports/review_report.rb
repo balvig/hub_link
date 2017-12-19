@@ -13,7 +13,7 @@ module Mergometer
 
 
         def prs_awaiting_review
-          prs.find_all(&:unreviewed?).map do |pr|
+          prs.find_all(&:awaiting_review?).map do |pr|
             "##{pr.number}"
           end
         end
@@ -23,7 +23,7 @@ module Mergometer
         end
 
         def filter
-          "repo:#{repo} type:pr updated:>=#{1.week.ago.to_date}"
+          "repo:#{repo} type:pr created:>=#{1.week.ago.to_date}"
         end
 
         def fields_to_preload
