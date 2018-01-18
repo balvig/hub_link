@@ -65,6 +65,8 @@ module Mergometer
     end
 
     def approval_time
+      return if first_approval.blank?
+
       (first_approval.submitted_at - created_at).in_hours
     end
 
@@ -93,6 +95,10 @@ module Mergometer
       end
 
       def reviews
+        @_reviews ||= fetch_reviews
+      end
+
+      def fetch_reviews
         Octokit.pull_request_reviews(repo, number).reject do |review|
           review.user.login == "houndci-bot"
         end

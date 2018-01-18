@@ -24,13 +24,19 @@ module Mergometer
         end
 
         def entries
-          super.sort_by(&:month).group_by(&:month).map do |date, prs|
+          eligible_prs.sort_by(&:week).group_by(&:week).map do |date, prs|
             MergeTrendReportEntry.new(date, prs)
           end
         end
 
+        def eligible_prs
+          prs.reject do |pr|
+            pr.approval_time.blank?
+          end
+        end
+
         def filter
-          "repo:#{repo} type:pr is:merged review:approved created:>=#{52.weeks.ago.beginning_of_month.to_date}"
+          "repo:#{repo} type:pr is:merged review:approved created:>=#{26.weeks.ago.beginning_of_month.to_date}"
         end
     end
   end
