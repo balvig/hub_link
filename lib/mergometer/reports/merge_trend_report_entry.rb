@@ -8,12 +8,8 @@ module Mergometer
         @prs = prs
       end
 
-      def pr_count
-        prs.size
-      end
-
-      def median_approval_time
-        Math.median prs.map(&:approval_time)
+      def value
+        Math.median prs.map(&:time_to_first_review)
       end
 
       private

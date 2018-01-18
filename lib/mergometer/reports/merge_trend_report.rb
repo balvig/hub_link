@@ -9,7 +9,7 @@ module Mergometer
           entry.date.strftime("%b")
         end.map.with_index { |x, i| [i, x] }.to_h
 
-        graph.data("Time to approval", entries.map(&:median_approval_time))
+        graph.data("Time to approval", entries.map(&:value))
         graph.write("merge_trend.png")
       end
 
@@ -24,7 +24,7 @@ module Mergometer
         end
 
         def entries
-          eligible_prs.sort_by(&:week).group_by(&:week).map do |date, prs|
+          eligible_prs.sort_by(&:month).group_by(&:month).map do |date, prs|
             MergeTrendReportEntry.new(date, prs)
           end
         end
