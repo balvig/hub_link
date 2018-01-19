@@ -4,39 +4,67 @@ require "mergometer/reports/merge_trend_report_entry"
 module Mergometer
   module Reports
     class MergeTrendReport < Report
-      def render
-        graph.labels = entries.map do |entry|
-          entry.date.strftime("%b")
-        end.map.with_index { |x, i| [i, x] }.to_h
+      METRICS = [:approval_time]
+      GROUPING = :week
 
-        graph.data("Time to approval", entries.map(&:value))
-        graph.write("merge_trend.png")
+      def render
+        graph.labels = labels
+
+        METRICS.each do |metric|
+          entries = grouped_prs.map do |date, prs|
+            MergeTrendReportEntry.new(date, prs.map(&metric))
+          end
+
+          graph.data(metric.to_s, entries.map(&:value))
+        end
+
+        graph.write("output.png")
       end
 
       private
 
         def fields_to_preload
-          %i(approval_time)
+          METRICS
         end
 
         def graph
-          @_graph ||= Gruff::Line.new(800)
+          @_graph ||= Gruff::Area.new(800)
         end
 
-        def entries
-          eligible_prs.sort_by(&:month).group_by(&:month).map do |date, prs|
-            MergeTrendReportEntry.new(date, prs)
-          end
+        def labels
+          {
+            0 => grouped_prs.keys.first.to_date,
+            grouped_prs.size - 1 => grouped_prs.keys.last.to_date
+          }
+        end
+
+        def grouped_prs
+          eligible_prs.sort_by(&GROUPING).group_by(&GROUPING)
         end
 
         def eligible_prs
           prs.reject do |pr|
-            pr.approval_time.blank?
+            METRICS.any? do |metric|
+              pr.public_send(metric).blank?
+            end
           end
         end
 
-        def filter
-          "repo:#{repo} type:pr is:merged review:approved created:>=#{26.weeks.ago.beginning_of_month.to_date}"
+        def items
+          @_items ||= fetch_items
+        end
+
+        def fetch_items
+          filters.flat_map do |filter|
+            Octokit.search_issues(filter).items
+          end
+        end
+
+        def filters
+          [
+            "repo:#{repo} type:pr review:approved created:#{52.weeks.ago.to_date}..#{26.weeks.ago.to_date}",
+            "repo:#{repo} type:pr review:approved created:>=#{26.weeks.ago.to_date}"
+          ]
         end
     end
   end

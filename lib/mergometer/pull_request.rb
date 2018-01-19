@@ -22,6 +22,10 @@ module Mergometer
       data.user.login
     end
 
+    def day
+      created_at.beginning_of_day
+    end
+
     def week
       created_at.beginning_of_week
     end
@@ -57,6 +61,8 @@ module Mergometer
     end
 
     def merge_time
+      return if data.closed_at.blank?
+
       (data.closed_at - created_at).in_hours
     end
 

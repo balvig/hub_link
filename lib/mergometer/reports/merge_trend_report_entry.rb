@@ -1,20 +1,30 @@
 module Mergometer
   module Reports
     class MergeTrendReportEntry
+      TRUNCATION_LIMIT = 2000
+
       attr_reader :date
 
-      def initialize(date, prs)
+      def initialize(date, values)
         @date = date
-        @prs = prs
+        @values = values
       end
 
       def value
-        Math.median prs.map(&:time_to_first_review)
+        if actual_value > TRUNCATION_LIMIT
+          TRUNCATION_LIMIT
+        else
+          actual_value
+        end
       end
 
       private
 
-        attr_reader :prs
+        def actual_value
+          @_actual_value ||= values.sum / values.size
+        end
+
+        attr_reader :values
     end
   end
 end
