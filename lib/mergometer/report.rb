@@ -54,11 +54,7 @@ module Mergometer
       end
 
       def prs
-        @_prs ||= items.map { |item| PullRequest.new(item) }
-      end
-
-      def items
-        Octokit.search_issues(filter).items
+        @_prs ||= PullRequest.search(filter)
       end
 
       def preload

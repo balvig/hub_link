@@ -6,6 +6,10 @@ module Mergometer
     LONG_RUNNING_LENGTH = 5 * 24 * 60 * 60 # Days
     HEAVILY_COMMENTED_COUNT = 20 # Comments
 
+    def self.search(filter)
+      Octokit.search_issues(filter).items.map { |item| new(item) }
+    end
+
     def initialize(data)
       @data = data
     end
@@ -74,10 +78,6 @@ module Mergometer
       return if first_approval.blank?
 
       (first_approval.submitted_at - created_at).in_hours
-    end
-
-    def awaiting_review?
-      !wip? && open? && reviewers.empty?
     end
 
     def reviewers

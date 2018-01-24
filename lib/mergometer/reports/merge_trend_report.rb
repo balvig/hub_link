@@ -50,13 +50,13 @@ module Mergometer
           end
         end
 
-        def items
-          @_items ||= fetch_items
+        def prs
+          @_prs ||= fetch_prs
         end
 
-        def fetch_items
+        def fetch_prs
           filters.flat_map do |filter|
-            Octokit.search_issues(filter).items
+            PullRequest.search(filter)
           end
         end
 

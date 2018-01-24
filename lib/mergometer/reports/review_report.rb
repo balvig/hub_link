@@ -6,16 +6,18 @@ module Mergometer
     class ReviewReport < Report
       def render
         super
-        puts "PRs awaiting review (#{prs_awaiting_review.size}): " + prs_awaiting_review.join(", ")
+        puts "PRs awaiting review: #{prs_awaiting_review.size}"
+        puts "https://github.com/cookpad/global-web/pulls?" + { q: awaiting_review_filter }.to_query
       end
 
       private
 
-
         def prs_awaiting_review
-          prs.find_all(&:awaiting_review?).map do |pr|
-            "##{pr.number}"
-          end
+          @_prs_awaiting_review ||= PullRequest.search(awaiting_review_filter)
+        end
+
+        def awaiting_review_filter
+          "repo:#{repo} is:pr is:open review:required NOT [WIP]"
         end
 
         def fields
@@ -27,7 +29,7 @@ module Mergometer
         end
 
         def fields_to_preload
-          %i(reviewers pr_data)
+          %i(reviewers)
         end
 
         def entries
