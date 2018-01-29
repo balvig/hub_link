@@ -13,7 +13,7 @@ brew install imagemagick@6 && brew link imagemagick@6 --force
 ```
 git clone https://github.com/balvig/mergometer.git
 cd mergometer
-OCTOKIT_ACCESS_TOKEN=<token> bundle exec ruby lib/mergometer.rb
+OCTOKIT_ACCESS_TOKEN=<token> bin/run
 ```
 
 ## Development
