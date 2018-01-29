@@ -26,10 +26,6 @@ module Mergometer
       data.user.login
     end
 
-    def day
-      created_at.beginning_of_day
-    end
-
     def week
       created_at.beginning_of_week
     end

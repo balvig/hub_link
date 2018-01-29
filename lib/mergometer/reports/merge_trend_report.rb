@@ -4,7 +4,7 @@ require "mergometer/reports/merge_trend_report_entry"
 module Mergometer
   module Reports
     class MergeTrendReport < Report
-      METRICS = [:approval_time]
+      METRICS = %i(approval_time merge_time)
       GROUPING = :week
 
       def render
