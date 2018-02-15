@@ -54,7 +54,13 @@ module Mergometer
       end
 
       def prs
-        @_prs ||= PullRequest.search(filter)
+        @_prs ||= fetch_prs
+      end
+
+      def fetch_prs
+        Array(filter).flat_map do |filter|
+          PullRequest.search(filter)
+        end
       end
 
       def preload

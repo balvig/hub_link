@@ -67,7 +67,9 @@ module Mergometer
     end
 
     def time_to_first_review
-      (reviews.first.submitted_at - created_at).in_hours
+      return if first_review.blank?
+
+      (first_review.submitted_at - created_at).in_hours
     end
 
     def approval_time
@@ -112,6 +114,10 @@ module Mergometer
 
       def first_approval
         reviews.find { |r| r.state == "APPROVED" }
+      end
+
+      def first_review
+        reviews.first
       end
 
       def comment_data

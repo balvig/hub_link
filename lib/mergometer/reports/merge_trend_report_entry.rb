@@ -1,7 +1,7 @@
 module Mergometer
   module Reports
     class MergeTrendReportEntry
-      TRUNCATION_LIMIT = 2000
+      TRUNCATION_LIMIT = 130
 
       attr_reader :date
 

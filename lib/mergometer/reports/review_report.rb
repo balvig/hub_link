@@ -1,5 +1,5 @@
 require "mergometer/report"
-require "mergometer/reports/review_report_entry"
+require "mergometer/reports/review_aggregates"
 
 module Mergometer
   module Reports
@@ -21,7 +21,7 @@ module Mergometer
         end
 
         def fields
-          [:user, :reviews]
+          %i(user reviews)
         end
 
         def filter
@@ -33,19 +33,7 @@ module Mergometer
         end
 
         def entries
-          review_data.map do |user, reviews|
-            ReviewReportEntry.new(user: user, reviews: reviews)
-          end
-        end
-
-        def review_data
-          prs.inject({}) do |result, pr|
-            pr.reviewers.each do |reviewer|
-              result[reviewer] ||= 0
-              result[reviewer] += 1
-            end
-            result
-          end
+          ReviewAggregates.new(prs).entries
         end
     end
   end
