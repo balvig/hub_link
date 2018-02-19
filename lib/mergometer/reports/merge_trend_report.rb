@@ -1,5 +1,5 @@
+require "csv"
 require "mergometer/report"
-require "mergometer/reports/graph"
 require "mergometer/reports/merge_trend_report_entry"
 
 module Mergometer
@@ -9,35 +9,24 @@ module Mergometer
       GROUPING = :week
 
       def render
-        METRICS.each do |metric|
-          entries = grouped_prs.map do |date, prs|
-            MergeTrendReportEntry.new(date, prs.map(&metric))
-          end
+        CSV.open("merge_trend_report.csv", "w") do |csv|
+          csv << [nil] + grouped_prs.keys.map(&:to_date)
+          METRICS.each do |metric|
+            entries = grouped_prs.map do |date, prs|
+              MergeTrendReportEntry.new(date, prs.map(&metric))
+            end
 
-          graph.data(metric.to_s, entries.map(&:value))
+            csv << [metric.to_s] + entries.map(&:value)
+          end
         end
 
-        graph.write("merge_trend_report.png")
+        puts "CSV exported."
       end
 
       private
 
         def fields_to_preload
           METRICS
-        end
-
-        def graph
-          @_graph ||= Graph.new(labels: labels)
-        end
-
-        def labels
-          grouped_prs.keys.each_with_index.inject({}) do |result, (time, index)|
-            if index % 4 == 0
-              result[index] = time.to_date
-            end
-
-            result
-          end
         end
 
         def grouped_prs

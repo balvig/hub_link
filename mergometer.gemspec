@@ -31,7 +31,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "facets"
   spec.add_dependency "faraday_middleware"
   spec.add_dependency "faraday-detailed_logger"
-  spec.add_dependency "gruff"
   spec.add_dependency "hirb"
   spec.add_dependency "octokit"
   spec.add_dependency "progress_bar"

@@ -1,27 +1,27 @@
+require "csv"
 require "mergometer/report"
-require "mergometer/reports/graph"
 require "mergometer/reports/review_aggregates"
 
 module Mergometer
   module Reports
     class IndividualReviewReport < Report
       GROUPING = :week
-      REVIEWERS = %w(balvig kinopyo guilleiguaran sikachu davidstosik sebasoga)
-      # REVIEWERS = %w(firewalker06 knack karlentwistle aqeelvn eqbal tapster l15n)
+      REVIEWERS = %w(balvig kinopyo guilleiguaran sikachu davidstosik sebasoga) +
+        %w(firewalker06 Knack karlentwistle aqeelvn eqbal JuanitoFatas tapster l15n) +
+        %w(rikarumi mshka)
 
       def render
-        data_sets.each do |user, values|
-          graph.data(user, values)
+        CSV.open("individual_review_report.csv", "w") do |csv|
+          csv << [nil] + grouped_entries.keys.map(&:to_date)
+          data_sets.each do |user, entries|
+            csv << [user] + entries.map(&:count)
+          end
         end
 
-        graph.write("individual_review_report.png")
+        puts "CSV exported."
       end
 
       private
-
-        def graph
-          @_graph ||= Graph.new(labels: labels)
-        end
 
         def filter
           [
@@ -34,21 +34,8 @@ module Mergometer
           %i(reviewers)
         end
 
-        def labels
-          grouped_entries.keys.each_with_index.inject({}) do |result, (time, index)|
-            if index % 4 == 0
-              result[index] = time.to_date
-            end
-
-            result
-          end
-        end
-
         def data_sets
-          grouped_entries.values.flatten.group_by(&:user).inject({}) do |result, (user, entries)|
-            result[user] = entries.map(&:count)
-            result
-          end
+          grouped_entries.values.flatten.group_by(&:user)
         end
 
         def grouped_entries

@@ -104,7 +104,7 @@ module Mergometer
 
       def fetch_reviews
         Octokit.pull_request_reviews(repo, number).reject do |review|
-          review.user.login == "houndci-bot"
+          review.user.login == "houndci-bot" || review.state == "COMMENTED"
         end
       end
 
