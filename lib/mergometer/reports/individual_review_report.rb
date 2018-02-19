@@ -1,20 +1,17 @@
-require "gruff"
 require "mergometer/report"
+require "mergometer/reports/graph"
 require "mergometer/reports/review_aggregates"
 
 module Mergometer
   module Reports
     class IndividualReviewReport < Report
       GROUPING = :week
+      REVIEWERS = %w(balvig kinopyo guilleiguaran sikachu davidstosik sebasoga)
+      # REVIEWERS = %w(firewalker06 knack karlentwistle aqeelvn eqbal tapster l15n)
 
       def render
-        graph.labels = labels
-        graph.hide_dots = true
-        graph.marker_font_size = 10
-        graph.legend_font_size = 15
-
-        data_sets.each do |user, reviews|
-          graph.data(user, reviews)
+        data_sets.each do |user, values|
+          graph.data(user, values)
         end
 
         graph.write("individual_review_report.png")
@@ -23,13 +20,13 @@ module Mergometer
       private
 
         def graph
-          @_graph ||= Gruff::Line.new("1000x600")
+          @_graph ||= Graph.new(labels: labels)
         end
 
         def filter
           [
-            #"repo:#{repo} type:pr created:#{52.weeks.ago.to_date}..#{26.weeks.ago.to_date}",
-            "repo:#{repo} type:pr created:>=#{26.weeks.ago.to_date}"
+            "repo:#{repo} type:pr created:#{52.weeks.ago.to_date}..#{26.weeks.ago.to_date}",
+            "repo:#{repo} type:pr created:#{26.weeks.ago.to_date}..#{1.week.ago.to_date}"
           ]
         end
 
@@ -49,7 +46,7 @@ module Mergometer
 
         def data_sets
           grouped_entries.values.flatten.group_by(&:user).inject({}) do |result, (user, entries)|
-            result[user] = entries.map(&:reviews)
+            result[user] = entries.map(&:count)
             result
           end
         end
@@ -60,13 +57,9 @@ module Mergometer
 
         def fetch_entries
           grouped_prs.inject({}) do |result, (time, prs)|
-            result[time] = ReviewAggregates.new(prs, reviewers: all_reviewers).entries
+            result[time] = ReviewAggregates.new(prs, reviewers: REVIEWERS).entries
             result
           end
-        end
-
-        def all_reviewers
-          @_all_reviewers ||= prs.flat_map(&:reviewers).uniq
         end
 
         def grouped_prs

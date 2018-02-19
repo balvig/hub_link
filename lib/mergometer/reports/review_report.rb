@@ -21,7 +21,7 @@ module Mergometer
         end
 
         def fields
-          %i(user reviews)
+          %i(user count percentage)
         end
 
         def filter

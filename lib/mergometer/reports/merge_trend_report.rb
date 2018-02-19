@@ -1,5 +1,5 @@
-require "gruff"
 require "mergometer/report"
+require "mergometer/reports/graph"
 require "mergometer/reports/merge_trend_report_entry"
 
 module Mergometer
@@ -9,11 +9,6 @@ module Mergometer
       GROUPING = :week
 
       def render
-        graph.labels = labels
-        graph.hide_dots = true
-        graph.marker_font_size = 10
-        graph.legend_font_size = graph.marker_font_size
-
         METRICS.each do |metric|
           entries = grouped_prs.map do |date, prs|
             MergeTrendReportEntry.new(date, prs.map(&metric))
@@ -32,7 +27,7 @@ module Mergometer
         end
 
         def graph
-          @_graph ||= Gruff::Line.new("1000x600")
+          @_graph ||= Graph.new(labels: labels)
         end
 
         def labels
@@ -60,7 +55,7 @@ module Mergometer
         def filter
           [
             "repo:#{repo} type:pr review:approved created:#{52.weeks.ago.to_date}..#{26.weeks.ago.to_date}",
-            "repo:#{repo} type:pr review:approved created:>=#{26.weeks.ago.to_date}"
+            "repo:#{repo} type:pr created:#{26.weeks.ago.to_date}..#{1.week.ago.to_date}"
           ]
         end
     end
