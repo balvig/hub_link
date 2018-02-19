@@ -3,9 +3,9 @@ require "mergometer/reports/review_report_entry"
 module Mergometer
   module Reports
     class ReviewAggregates
-      def initialize(prs, reviewers: reviewers_in_batch)
+      def initialize(prs, reviewers: nil)
         @prs = prs
-        @reviewers = reviewers
+        @reviewers ||= reviewers_in_batch
       end
 
       def entries
