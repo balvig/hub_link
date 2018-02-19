@@ -4,14 +4,12 @@ require "mergometer/reports/aggregate"
 
 module Mergometer
   module Reports
-    class IndividualReviewReport < Report
+    class ContributionReport < Report
       GROUPING = :week
-      REVIEWERS = %w(balvig kinopyo guilleiguaran sikachu davidstosik sebasoga) +
-        %w(firewalker06 Knack karlentwistle aqeelvn eqbal JuanitoFatas tapster l15n) +
-        %w(rikarumi mshka)
+      COMMITTERS = %w(rikarumi mshka teka23 subinwalter)
 
       def render
-        CSV.open("individual_review_report.csv", "w") do |csv|
+        CSV.open("contribution_report.csv", "w") do |csv|
           csv << [nil] + grouped_entries.keys.map(&:to_date)
           data_sets.each do |user, entries|
             csv << [user] + entries.map(&:count)
@@ -30,10 +28,6 @@ module Mergometer
           ]
         end
 
-        def fields_to_preload
-          %i(reviewers)
-        end
-
         def data_sets
           grouped_entries.values.flatten.group_by(&:user)
         end
@@ -44,10 +38,10 @@ module Mergometer
 
         def fetch_entries
           grouped_prs.inject({}) do |result, (time, prs)|
-            result[time] = Aggregate.new(prs: prs, users: REVIEWERS).run do |pr, user|
-              pr.reviewers.include?(user)
+            result[time] = Aggregate.new(prs: prs, users: COMMITTERS).run do |pr, user|
+              pr.user == user
             end
-            result
+          result
           end
         end
 

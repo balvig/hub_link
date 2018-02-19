@@ -1,5 +1,5 @@
 require "mergometer/report"
-require "mergometer/reports/review_aggregates"
+require "mergometer/reports/aggregate"
 
 module Mergometer
   module Reports
@@ -21,7 +21,7 @@ module Mergometer
         end
 
         def fields
-          %i(user count percentage)
+          %i(user count)
         end
 
         def filter
@@ -33,7 +33,13 @@ module Mergometer
         end
 
         def entries
-          ReviewAggregates.new(prs).entries
+          Aggregate.new(prs: prs, users: reviewers_in_prs).run do |pr, user|
+            pr.reviewers.include?(user)
+          end
+        end
+
+        def reviewers_in_prs
+          prs.flat_map(&:reviewers).uniq
         end
     end
   end
