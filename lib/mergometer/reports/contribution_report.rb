@@ -6,7 +6,6 @@ module Mergometer
   module Reports
     class ContributionReport < Report
       GROUPING = :week
-      COMMITTERS = %w(rikarumi mshka teka23 subinwalter)
 
       def render
         CSV.open("contribution_report.csv", "w") do |csv|
@@ -38,11 +37,15 @@ module Mergometer
 
         def fetch_entries
           grouped_prs.inject({}) do |result, (time, prs)|
-            result[time] = Aggregate.new(prs: prs, users: COMMITTERS).run do |pr, user|
+            result[time] = Aggregate.new(prs: prs, users: contributors).run do |pr, user|
               pr.user == user
             end
           result
           end
+        end
+
+        def contributors
+          @_contributors ||= prs.map(&:user).uniq
         end
 
         def grouped_prs

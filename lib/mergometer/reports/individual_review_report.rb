@@ -6,9 +6,6 @@ module Mergometer
   module Reports
     class IndividualReviewReport < Report
       GROUPING = :week
-      REVIEWERS = %w(balvig kinopyo guilleiguaran sikachu davidstosik sebasoga) +
-        %w(firewalker06 Knack karlentwistle aqeelvn eqbal JuanitoFatas tapster l15n) +
-        %w(rikarumi mshka)
 
       def render
         CSV.open("individual_review_report.csv", "w") do |csv|
@@ -44,11 +41,15 @@ module Mergometer
 
         def fetch_entries
           grouped_prs.inject({}) do |result, (time, prs)|
-            result[time] = Aggregate.new(prs: prs, users: REVIEWERS).run do |pr, user|
+            result[time] = Aggregate.new(prs: prs, users: all_reviewers).run do |pr, user|
               pr.reviewers.include?(user)
             end
             result
           end
+        end
+
+        def all_reviewers
+          @_all_reviewers ||= prs.flat_map(&:reviewers).uniq
         end
 
         def grouped_prs
