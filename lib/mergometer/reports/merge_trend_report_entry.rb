@@ -1,8 +1,6 @@
 module Mergometer
   module Reports
     class MergeTrendReportEntry
-      TRUNCATION_LIMIT = 130
-
       attr_reader :date
 
       def initialize(date, values)
@@ -11,17 +9,13 @@ module Mergometer
       end
 
       def value
-        if actual_value > TRUNCATION_LIMIT
-          TRUNCATION_LIMIT
-        else
-          actual_value
-        end
+        average
       end
 
       private
 
-        def actual_value
-          @_actual_value ||= values.sum / values.size
+        def average
+          @_average ||= values.sum / values.size
         end
 
         attr_reader :values
