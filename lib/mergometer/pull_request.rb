@@ -3,7 +3,7 @@ require "mergometer/core_ext/float"
 module Mergometer
   class PullRequest
     QUICK_FIX_CUTOFF = 6 # Changes
-    LONG_RUNNING_LENGTH = 5 * 24 * 60 * 60 # Days
+    LONG_RUNNING_LENGTH = 5 * 24 # Days
     HEAVILY_COMMENTED_COUNT = 20 # Comments
 
     def self.search(filter)
@@ -37,7 +37,11 @@ module Mergometer
     # Metrics
 
     def additions
-      pr_data.additions
+      extended_data.additions
+    end
+
+    def body_size
+      data.body.to_s.size
     end
 
     def problematic?
@@ -49,7 +53,7 @@ module Mergometer
     end
 
     def long_running?
-      merge_time_in_seconds > LONG_RUNNING_LENGTH
+      merge_time > LONG_RUNNING_LENGTH
     end
 
     def heavily_commented?
@@ -109,7 +113,7 @@ module Mergometer
       end
 
       def changes
-        @_changes ||= pr_data.additions + pr_data.deletions
+        @_changes ||= extended_data.additions + extended_data.deletions
       end
 
       def first_approval
@@ -121,15 +125,15 @@ module Mergometer
       end
 
       def comment_data
-        @_comment_data ||= Octokit.get(pr_data.review_comments_url)
+        @_comment_data ||= Octokit.get(extended_data.review_comments_url)
       end
 
-      def pr_data
-        @_pr_data ||= Octokit.get(data.pull_request.url)
+      def extended_data
+        @_extended_data ||= Octokit.get(data.pull_request.url)
       end
 
       def repo
-        pr_data.base.repo.full_name
+        extended_data.base.repo.full_name
       end
   end
 end

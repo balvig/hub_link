@@ -1,19 +1,19 @@
 require "csv"
 require "mergometer/report"
-require "mergometer/reports/merge_trend_report_entry"
+require "mergometer/reports/pr_trend_report_entry"
 
 module Mergometer
   module Reports
-    class MergeTrendReport < Report
+    class PrTrendReport < Report
       METRICS = %i(approval_time time_to_first_review merge_time)
       GROUPING = :week
 
       def render
-        CSV.open("merge_trend_report.csv", "w") do |csv|
+        CSV.open("pr_trend_report.csv", "w") do |csv|
           csv << [nil] + grouped_prs.keys.map(&:to_date)
           METRICS.each do |metric|
             entries = grouped_prs.map do |date, prs|
-              MergeTrendReportEntry.new(date, prs.map(&metric))
+              PrTrendReportEntry.new(date, prs.map(&metric))
             end
 
             csv << [metric.to_s] + entries.map(&:value)
@@ -43,7 +43,7 @@ module Mergometer
 
         def filter
           [
-            "repo:#{repo} type:pr review:approved created:#{52.weeks.ago.to_date}..#{26.weeks.ago.to_date}",
+            "repo:#{repo} type:pr created:#{52.weeks.ago.to_date}..#{26.weeks.ago.to_date}",
             "repo:#{repo} type:pr created:#{26.weeks.ago.to_date}..#{1.week.ago.to_date}"
           ]
         end

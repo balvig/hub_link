@@ -1,6 +1,6 @@
 module Mergometer
   module Reports
-    class MergeTrendReportEntry
+    class PrTrendReportEntry
       attr_reader :date
 
       def initialize(date, values)
