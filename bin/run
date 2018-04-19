@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-bundle exec ruby lib/mergometer.rb $1
+bundle exec ruby lib/mergometer.rb $1 $2
