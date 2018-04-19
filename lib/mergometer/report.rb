@@ -5,8 +5,9 @@ module Mergometer
   class Report
     require "hirb"
 
-    def initialize(repo)
+    def initialize(repo, **options)
       @repo = repo
+      @from = options[:from] || (Date.today - 1.day).beginning_of_week.to_s
     end
 
     def run
@@ -16,7 +17,7 @@ module Mergometer
 
     private
 
-      attr_accessor :repo
+      attr_accessor :repo, :from
 
       def render
         puts Hirb::Helpers::AutoTable.render(
@@ -46,7 +47,7 @@ module Mergometer
       end
 
       def filter
-        "base:master repo:#{repo} type:pr is:merged"
+        "base:master #{repo} type:pr is:merged created:>=#{from}"
       end
 
       def fields_to_preload
