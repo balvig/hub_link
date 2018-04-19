@@ -5,22 +5,25 @@ module Mergometer
   class Report
     require "hirb"
 
-    def initialize(repo)
+    GROUPING = :week
+
+    def initialize(repo, from = nil)
       @repo = repo
+      @from = from || (Date.today - 1.day).beginning_of_week.strftime("%Y-%m-%d")
     end
 
     def run
       preload
-      render
+      p grouped_prs_by_week.keys, from
     end
 
     private
 
-      attr_accessor :repo
+      attr_accessor :repo, :from
 
       def render
         puts Hirb::Helpers::AutoTable.render(
-          sorted_entries,
+          grouped_prs_by_week,
           unicode: true,
           fields: fields,
           description: false
@@ -29,24 +32,12 @@ module Mergometer
         puts "Total number of PRs checked: #{prs.size} (#{filter})"
       end
 
-      def fields
-        raise "Implement fields method"
-      end
-
-      def sort_field
-        fields.last
-      end
-
-      def sorted_entries
-        entries.sort_by(&sort_field).reverse
-      end
-
-      def entries
-        prs
+      def reversed_prs
+        prs.reverse_each.map { |v| v }
       end
 
       def filter
-        "base:master repo:#{repo} type:pr is:merged"
+        "base:master repo:#{repo} type:pr is:merged created:>=#{from}"
       end
 
       def fields_to_preload
@@ -61,6 +52,14 @@ module Mergometer
         Array(filter).flat_map do |filter|
           PullRequest.search(filter)
         end
+      end
+
+      def grouped_prs_by_week
+        @_grouped_prs_by_week ||= reversed_prs.sort_by(&GROUPING).group_by(&GROUPING)
+      end
+
+      def contributors
+        @contributors ||= prs.group_by(&:user).keys
       end
 
       def preload
