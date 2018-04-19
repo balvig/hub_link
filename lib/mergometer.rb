@@ -11,12 +11,11 @@ module Mergometer
   Configuration.new(cache_time: 72 * 3600).apply
 
   begin
-    report_type = Object.const_get("Mergometer::Reports::#{ARGV.first}")
+    report_type = Object.const_get("Mergometer::Reports::#{ARGV[0]}")
   rescue NameError
     reports = Mergometer::Reports.constants.select { |c| c.to_s.end_with?("Report") }
     puts "Report not found, must be one of: \n\n" + reports.join("\n")
     exit
   end
-
-  report_type.new("cookpad/global-web").run
+  report_type.new(ARGV[1]).run
 end
