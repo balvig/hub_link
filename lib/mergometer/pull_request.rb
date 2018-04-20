@@ -86,6 +86,10 @@ module Mergometer
       @_reviewers ||= reviews.map(&:user).map(&:login).uniq
     end
 
+    def number_of_given_reviews
+      reviewers.size
+    end
+
     private
 
       attr_accessor :data
@@ -108,7 +112,7 @@ module Mergometer
 
       def fetch_reviews
         Octokit.pull_request_reviews(repo, number).reject do |review|
-          review.user.login == "houndci-bot" || review.state == "COMMENTED"
+          review.user.login == "houndci-bot"
         end
       end
 
