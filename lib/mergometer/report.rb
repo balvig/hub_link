@@ -1,6 +1,9 @@
 require "progress_bar"
 require "mergometer/pull_request"
 
+reports_path = File.expand_path("./reports/**/*.rb", __FILE__)
+Dir[reports_path].each { |f| require f }
+
 module Mergometer
   class Report
     require "hirb"
