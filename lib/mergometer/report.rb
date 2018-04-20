@@ -1,23 +1,28 @@
+require "hirb"
 require "progress_bar"
 require "mergometer/pull_request"
 
-reports_path = File.expand_path("./reports/**/*.rb", __FILE__)
+reports_path = File.expand_path("../reports/**/*.rb", __FILE__)
 Dir[reports_path].each { |f| require f }
 
 module Mergometer
   class Report
-    require "hirb"
-
     GROUPING = :week
+    METRICS = %i[user reviewers approval_time time_to_first_review merge_time quick_fix? comment_count additions heavily_commented? number_of_given_reviews].freeze
 
     def initialize(repo, from = nil)
       @repo = repo
       @from = from || (Date.today - 1.day).beginning_of_week.strftime("%Y-%m-%d")
+      preload
+      render
     end
 
-    def run
-      preload
-      p grouped_prs_by_week.keys, from
+    def user_pr_contribution
+      Mergometer::Reports::ContributionReport.new(grouped_prs_by_week, contributors)
+    end
+
+    def user_review_contribution
+      Mergometer::Reports::IndividualReviewReport.new(grouped_prs_by_week, reviewers)
     end
 
     private
@@ -25,14 +30,7 @@ module Mergometer
       attr_accessor :repo, :from
 
       def render
-        puts Hirb::Helpers::AutoTable.render(
-          grouped_prs_by_week,
-          unicode: true,
-          fields: fields,
-          description: false
-        )
-
-        puts "Total number of PRs checked: #{prs.size} (#{filter})"
+        puts "Total number of PRs fetched: #{prs.size} (#{filter})"
       end
 
       def reversed_prs
@@ -44,7 +42,7 @@ module Mergometer
       end
 
       def fields_to_preload
-        []
+        METRICS
       end
 
       def prs
@@ -62,7 +60,11 @@ module Mergometer
       end
 
       def contributors
-        @contributors ||= prs.group_by(&:user).keys
+        @_contributors ||= prs.group_by(&:user).keys
+      end
+
+      def reviewers
+        @_reviewers ||= prs.flat_map(&:reviewers).uniq
       end
 
       def preload
