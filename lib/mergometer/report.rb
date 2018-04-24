@@ -46,11 +46,17 @@ module Mergometer
       end
 
       def filter
-        "base:master repo:#{repo} type:pr is:merged"
+        "base:master #{repo_query} type:pr is:merged"
       end
 
       def fields_to_preload
         []
+      end
+
+      def repo_query
+        @_query = repo.split(',').map do |r|
+          "repo:#{r} "
+        end.to_a.join
       end
 
       def prs
