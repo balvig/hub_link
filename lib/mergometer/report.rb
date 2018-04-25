@@ -54,7 +54,7 @@ module Mergometer
       end
 
       def repo_query
-        @_query = repo.split(',').map do |r|
+        @_repo_query = repo.split(",").map do |r|
           "repo:#{r} "
         end.to_a.join
       end
