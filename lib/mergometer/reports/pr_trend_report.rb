@@ -40,13 +40,6 @@ module Mergometer
             end
           end
         end
-
-        def filter
-          [
-            "#{repo_query} type:pr created:#{52.weeks.ago.to_date}..#{26.weeks.ago.to_date}",
-            "#{repo_query} type:pr created:#{26.weeks.ago.to_date}..#{1.week.ago.to_date}"
-          ]
-        end
     end
   end
 end
