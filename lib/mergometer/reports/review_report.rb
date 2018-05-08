@@ -17,7 +17,7 @@ module Mergometer
         end
 
         def awaiting_review_filter
-          "repo:#{repo} is:pr is:open review:required NOT [WIP]"
+          "#{repo_query} is:pr is:open review:required NOT [WIP]"
         end
 
         def fields
@@ -25,7 +25,7 @@ module Mergometer
         end
 
         def filter
-          "repo:#{repo} type:pr created:>=#{1.week.ago.to_date}"
+          "#{repo_query} type:pr created:>=#{1.week.ago.to_date}"
         end
 
         def fields_to_preload
