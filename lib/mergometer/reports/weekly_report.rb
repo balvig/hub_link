@@ -20,7 +20,7 @@ module Mergometer
         end
 
         def filter
-          "repo:#{repo} type:pr created:<=#{Time.current.last_week.end_of_week.to_date}"
+          "#{repo_query} type:pr created:<=#{Time.current.last_week.end_of_week.to_date}"
         end
 
         def build_entries
