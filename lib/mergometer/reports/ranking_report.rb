@@ -4,7 +4,7 @@ require "mergometer/reports/ranking_report_entry"
 module Mergometer
   module Reports
     class RankingReport < Report
-      METRICS = %i(eligible_pr_count comment_count additions heavily_commented_count problem_ratio num_of_given_reviews)
+      METRICS = %i(eligible_pr_count median_comment_count heavily_commented_count problem_ratio num_of_given_reviews)
 
       def render
         puts "Metrics: #{METRICS.join(", ")}"
@@ -14,7 +14,7 @@ module Mergometer
       private
 
         def fields_to_preload
-          fields
+          %i(quick_fix?)
         end
 
         def fields
