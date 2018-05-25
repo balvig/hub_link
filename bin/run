@@ -1,2 +1,3 @@
 #!/usr/bin/env bash
-bundle exec ruby lib/mergometer.rb $1 $2 $3
+
+bundle exec ruby lib/run.rb $1 $2 $3
