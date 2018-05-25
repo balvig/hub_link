@@ -8,3 +8,5 @@
 /spec/reports/
 /tmp/
 *.csv
+*.pdf
+.rubocop-https*
