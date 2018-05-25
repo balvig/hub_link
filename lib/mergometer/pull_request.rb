@@ -86,21 +86,37 @@ module Mergometer
       (first_approval.submitted_at - created_at).in_hours
     end
 
+    def review_required?
+      reviewers_count == 0
+    end
+
+    def reviewers_count
+      reviewers.size
+    end
+
     def reviewers
       @_reviewers ||= reviews.map(&:user).map(&:login).uniq
+    end
+
+    def open?
+      data.state == "open"
+    end
+
+    def merged?
+      data.state == "merged"
+    end
+
+    def wip?
+      title.include?("[WIP]")
+    end
+
+    def changes
+      @_changes ||= extended_data.additions + extended_data.deletions
     end
 
     private
 
       attr_accessor :data
-
-      def open?
-        data.state == "open"
-      end
-
-      def wip?
-        title.include?("[WIP]")
-      end
 
       def created_at
         data.created_at
@@ -112,12 +128,8 @@ module Mergometer
 
       def fetch_reviews
         Octokit.pull_request_reviews(repo, number).reject do |review|
-          review.user.login == "houndci-bot" || review.state == "COMMENTED"
+          review.user.login.end_with?("bot")
         end
-      end
-
-      def changes
-        @_changes ||= extended_data.additions + extended_data.deletions
       end
 
       def first_approval
