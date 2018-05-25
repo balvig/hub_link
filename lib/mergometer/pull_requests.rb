@@ -37,7 +37,7 @@ module Mergometer
         options.map { |k, v| "#{k}:#{v}" }.join(" ")
       end
 
-      def date_query_array(from:, to: Date.today.to_s)
+      def date_query_array(from:, to:)
         to = to || Date.today.to_s
         _, *dates = (Date.parse(from)..Date.parse(to)).group_by(&:month).map do |_, v|
           v.first
