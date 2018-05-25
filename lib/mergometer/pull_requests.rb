@@ -21,7 +21,9 @@ module Mergometer
           **options
         }
         if options[:from]
-          "#{filtered_query(options)} #{date_query_array(from: options[:from], to: options[:to])}"
+          date_query_array(from: options[:from], to: options[:to]).map do |dq|
+            "#{filtered_query(options)} #{dq}"
+          end
         else
           filtered_query(options)
         end
@@ -35,7 +37,8 @@ module Mergometer
         options.map { |k, v| "#{k}:#{v}" }.join(" ")
       end
 
-      def date_query_array(from:, to: Date.today.to_s)
+      def date_query_array(from:, to:)
+        to = to || Date.today.to_s
         _, *dates = (Date.parse(from)..Date.parse(to)).group_by(&:month).map do |_, v|
           v.first
         end
@@ -47,7 +50,7 @@ module Mergometer
 
       def repo_query(repos)
         if repos.is_a?(String)
-          repo.split(",")
+          repos.split(",")
         elsif repos.is_a?(Array) && repos.first&.is_a?(String)
           repos
         else
