@@ -4,7 +4,7 @@ module Mergometer
   module Reports
     class BaseReport
       DEFAULT_OPTIONS = {
-        name: self.class.name.demodulize,
+        name: default_name,
         group_by: :week
       }.freeze
 
@@ -53,8 +53,12 @@ module Mergometer
 
         attr_reader :prs
 
+        def default_name
+          self.class.name.demodulize
+        end
+
         def table_entries
-          @_tabled_entries ||= data_sets.map do |key, entries|
+          @tabled_entries ||= data_sets.map do |key, entries|
             ([first_column_name => key] + entries.each_with_index.map do |v, i|
               { table_keys[i] => v }
             end + ["Total" => sum[key]] + ["Average" => average[key]]).reduce({}, :merge)
@@ -62,7 +66,7 @@ module Mergometer
         end
 
         def grouped_entries_by_time_and_user
-          @_grouped_entries_by_week_and_user ||= grouped_prs_by(@group_by).inject({}) do |result, (time, prs)|
+          @grouped_entries_by_week_and_user ||= grouped_prs_by(@group_by).inject({}) do |result, (time, prs)|
             result[time] = Reports::Aggregate.new(prs: prs, users: contributors).run do |pr, user|
               pr.user == user
             end
@@ -71,7 +75,7 @@ module Mergometer
         end
 
         def grouped_entries_by_time_and_reviewer
-          @_grouped_entries_by_week_and_user ||= grouped_prs_by(@group_by).inject({}) do |result, (time, prs)|
+          @grouped_entries_by_week_and_user ||= grouped_prs_by(@group_by).inject({}) do |result, (time, prs)|
             result[time] = Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, user|
               pr.reviewers.include?(user)
             end
@@ -80,19 +84,19 @@ module Mergometer
         end
 
         def grouped_prs_by(type: :week)
-          @_grouped_prs_by ||= prs.sort_by(&type).group_by(&type)
+          @grouped_prs_by ||= prs.sort_by(&type).group_by(&type)
         end
 
         def grouped_prs_by_users
-          @_grouped_prs_by_users ||= prs.group_by(&:user)
+          @grouped_prs_by_users ||= prs.group_by(&:user)
         end
 
         def users
-          @_users ||= prs.group_by(&:user).keys
+          @users ||= prs.group_by(&:user).keys
         end
 
         def reviewers
-          @_reviewers ||= prs.flat_map(&:reviewers).uniq
+          @reviewers ||= prs.flat_map(&:reviewers).uniq
         end
 
         def first_column_name
@@ -108,13 +112,13 @@ module Mergometer
         end
 
         def average
-          @_average ||= data_sets.map do |k, v|
+          @average ||= data_sets.map do |k, v|
             [k, v.reduce(:+) / v.size.to_f]
           end.to_h
         end
 
         def sum
-          @_sum ||= data_sets.map do |k, v|
+          @sum ||= data_sets.map do |k, v|
             [k, v.reduce(:+)]
           end.to_h
         end

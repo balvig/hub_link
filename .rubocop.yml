@@ -1,0 +1,3 @@
+inherit_from:
+  - https://raw.githubusercontent.com/cookpad/guides/master/.rubocop.yml
+  
