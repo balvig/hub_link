@@ -7,7 +7,8 @@ module Mergometer
         @prs = prs
         {
           name: default_name,
-          group_by: :week
+          group_by: :week,
+          graph_type: "Line"
         }.each do |k, v|
           instance_variable_set("@#{k}", options[k] || v)
         end
@@ -37,7 +38,7 @@ module Mergometer
         table_entries
       end
 
-      def save_graph_to_image(type: "Line")
+      def save_graph_to_image(type: @graph_type)
         g = Object.const_get("Gruff::#{type}").new
         g.title = @name
         g.labels = table_keys.to_h
@@ -45,6 +46,8 @@ module Mergometer
           g.data key.to_sym, set
         end
         g.write("#{@name}.png")
+
+        p "#{@name} PNG exported."
       end
 
       private
