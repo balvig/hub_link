@@ -3,14 +3,12 @@ require "gruff"
 module Mergometer
   module Reports
     class BaseReport
-      DEFAULT_OPTIONS = {
-        name: default_name,
-        group_by: :week
-      }.freeze
-
       def initialize(prs, **options)
         @prs = prs
-        DEFAULT_OPTIONS.each do |k, v|
+        {
+          name: default_name,
+          group_by: :week
+        }.each do |k, v|
           instance_variable_set("@#{k}", options[k] || v)
         end
       end
@@ -23,7 +21,7 @@ module Mergometer
           end
         end
 
-        puts "#{@name} CSV exported."
+        p "#{@name} CSV exported."
       end
 
       def print_report

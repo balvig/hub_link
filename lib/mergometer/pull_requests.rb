@@ -3,7 +3,7 @@ require "Date"
 module Mergometer
   class PullRequests
     class << self
-      def search(repos:, **options)
+      def search(repos, **options)
         filter = query_from_options(options).map do |o|
           "#{repo_query(repos)} #{o}"
         end
@@ -39,8 +39,8 @@ module Mergometer
 
       def date_query_array(from:, to:)
         to = to || Date.today.to_s
-        _, *dates = (Date.parse(from)..Date.parse(to)).group_by(&:month).map do |_, v|
-          v.first
+        _, *dates = (Date.parse(from)..Date.parse(to)).group_by(&:beginning_of_month).map do |_, month|
+          month.first
         end
         req_dates = [Date.parse(from), *dates]
         req_dates.each_with_index.map do |date, i|
@@ -74,11 +74,19 @@ module Mergometer
     end
 
     def review_required
-      prs.select(&:reviewe_required)
+      prs.select(&:review_required?)
     end
 
     def merged
       prs.select(&:merged?)
+    end
+
+    def size
+      count
+    end
+
+    def count
+      prs.size
     end
   end
 end
