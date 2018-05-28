@@ -14,6 +14,30 @@ module Mergometer
         pull_requests
       end
 
+      def this_week(repos, **options)
+        options[:from] = Date.today.beginning_of_week.strftime("%F")
+        options[:to] = Date.today.end_of_week.strftime("%F")
+        search(repos, **options)
+      end
+
+      def last_week(repos, **options)
+        options[:from] = Date.today.last_week.beginning_of_week.strftime("%F")
+        options[:to] = Date.today.last_week.end_of_week.strftime("%F")
+        search(repos, **options)
+      end
+
+      def this_month(repos, **options)
+        options[:from] = Date.today.beginning_of_month.strftime("%F")
+        options[:to] = Date.today.end_of_month.strftime("%F")
+        search(repos, **options)
+      end
+
+      def last_month(repos, **options)
+        options[:from] = Date.today.last_month.beginning_of_month.strftime("%F")
+        options[:to] = Date.today.last_month.end_of_month.strftime("%F")
+        search(repos, **options)
+      end
+
       def query_from_options(options)
         options = {
           type: "pr",
@@ -30,11 +54,13 @@ module Mergometer
       end
 
       def filtered_query(options)
+        query = options[:query]
         options.tap do |hs|
           hs.delete(:from)
           hs.delete(:to)
+          hs.delete(:query)
         end
-        options.map { |k, v| "#{k}:#{v}" }.join(" ")
+        options.map { |k, v| "#{k}:#{v}" }.join(" ") + " #{query}"
       end
 
       def date_query_array(from:, to:)
@@ -73,11 +99,16 @@ module Mergometer
       prs.push(*pull_requests.prs)
     end
 
-    def review_required
-      prs.select(&:review_required?)
+    def review_required_prs
+      rr_prs = []
+      prs.each do |pr|
+        rr_prs.push(pr) if pr.review_required?
+        progress_bar.increment!
+      end
+      rr_prs
     end
 
-    def merged
+    def merged_prs
       prs.select(&:merged?)
     end
 
@@ -87,6 +118,10 @@ module Mergometer
 
     def count
       prs.size
+    end
+
+    def progress_bar
+      @_progress_bar ||= ProgressBar.new(prs.size, :bar, :counter, :elapsed)
     end
   end
 end

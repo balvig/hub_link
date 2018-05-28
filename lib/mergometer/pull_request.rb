@@ -87,7 +87,7 @@ module Mergometer
     end
 
     def review_required?
-      reviewers_count == 0
+      reviewers_count == 0 && open? && !wip?
     end
 
     def reviewers_count
