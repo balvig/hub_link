@@ -1,7 +1,7 @@
 module Mergometer
   module Reports
     class PrTrendReport < BaseReport
-      METRICS = %i(approval_time time_to_first_review merge_time number_of_given_reviews)
+      METRICS = %i(approval_time time_to_first_review merge_time number_of_given_reviews).freeze
 
       private
 
