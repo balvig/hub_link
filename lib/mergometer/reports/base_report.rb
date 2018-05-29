@@ -16,9 +16,7 @@ module Mergometer
         }.each do |k, v|
           instance_variable_set("@#{k}", options[k] || v)
         end
-        if @load_reviews
-          prs.each(&:reviews)
-        end
+        load_reviews if @load_reviews
       end
 
       def save_to_csv
@@ -171,6 +169,19 @@ module Mergometer
 
         def prs
           @prs.select(&:merged?)
+        end
+
+        def load_reviews
+          puts "Loading PR reviews"
+          prs.each do |pr|
+            pr.review_required?
+            progress_bar.increment!
+          end
+          progress_bar.increment! @prs.size
+        end
+
+        def progress_bar
+          @_progress_bar ||= ProgressBar.new(@prs.size, :elapsed, :bar, :counter, :rate)
         end
     end
   end

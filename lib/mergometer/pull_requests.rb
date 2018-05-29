@@ -100,12 +100,7 @@ module Mergometer
     end
 
     def review_required_prs
-      rr_prs = []
-      prs.each do |pr|
-        rr_prs.push(pr) if pr.review_required?
-        progress_bar.increment!
-      end
-      rr_prs
+      prs.select(&:review_required)
     end
 
     def merged_prs
@@ -118,10 +113,6 @@ module Mergometer
 
     def count
       prs.size
-    end
-
-    def progress_bar
-      @_progress_bar ||= ProgressBar.new(prs.size, :bar, :counter, :elapsed)
     end
   end
 end
