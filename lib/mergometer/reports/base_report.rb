@@ -8,7 +8,7 @@ module Mergometer
         @prs = prs
         {
           name: default_name,
-          group_by: :week,
+          group_by: "week",
           graph_type: "Line"
         }.each do |k, v|
           instance_variable_set("@#{k}", options[k] || v)
@@ -53,8 +53,6 @@ module Mergometer
 
       private
 
-        attr_reader :prs
-
         def gruff_labels
           labels = {}
           table_keys.each_with_index do |v, i|
@@ -76,7 +74,7 @@ module Mergometer
         end
 
         def grouped_entries_by_time_and_user
-          @grouped_entries_by_time_and_user ||= grouped_prs_by(@group_by).inject({}) do |result, (time, prs)|
+          @grouped_entries_by_time_and_user ||= grouped_prs_by_time.inject({}) do |result, (time, prs)|
             result[time] = Reports::Aggregate.new(prs: prs, users: users).run do |pr, user|
               pr.user == user
             end
@@ -85,7 +83,7 @@ module Mergometer
         end
 
         def grouped_entries_by_time_and_reviewer
-          @grouped_entries_by_time_and_reviewer ||= grouped_prs_by(@group_by).inject({}) do |result, (time, prs)|
+          @grouped_entries_by_time_and_reviewer ||= grouped_prs_by_time.inject({}) do |result, (time, prs)|
             result[time] = Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, user|
               pr.reviewers.include?(user)
             end
@@ -93,7 +91,7 @@ module Mergometer
           end
         end
 
-        def grouped_prs_by(type)
+        def grouped_prs_by_time(type = @group_by.to_sym)
           @grouped_prs_by ||= prs.sort_by(&type).group_by(&type)
         end
 
@@ -129,8 +127,12 @@ module Mergometer
 
         def sum
           @sum ||= data_sets.map do |k, v|
-            [k, v.reduce(:+)]
+            [k, v.reduce(:+).round(2)]
           end.to_h
+        end
+
+        def prs
+          @prs
         end
     end
   end
