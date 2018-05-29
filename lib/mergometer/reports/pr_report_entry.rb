@@ -1,7 +1,7 @@
 module Mergometer
   module Reports
     class PrReportEntry
-      def initialize(prs:)
+      def initialize(prs)
         @prs = prs
       end
 
@@ -53,6 +53,18 @@ module Mergometer
 
       def average_changes
         @changes ||= calculate_metric(:changes)
+      end
+
+      def average_approval_time
+        @average_approval_time ||= calculate_metric(:approval_time)
+      end
+
+      def average_time_to_first_review
+        @average_time_to_first_review ||= calculate_metric(:time_to_first_review)
+      end
+
+      def average_number_of_given_reviews
+        @average_number_of_given_reviews ||= calculate_metric(:number_of_given_reviews)
       end
 
       private

@@ -30,7 +30,7 @@ module Mergometer
 
         def all_rankings
           @all_rankings ||= grouped_prs_by_users.map do |user, user_prs|
-            [user, PrReportEntry.new(prs: user_prs)]
+            [user, PrReportEntry.new(user_prs)]
           end.to_h
         end
 
