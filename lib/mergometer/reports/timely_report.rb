@@ -32,11 +32,11 @@ module Mergometer
         end.to_h
       end
 
-      def add_total?
+      def show_total?
         false
       end
 
-      def add_average?
+      def show_average?
         false
       end
     end

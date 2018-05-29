@@ -9,7 +9,9 @@ module Mergometer
         {
           name: default_name,
           group_by: "week",
-          graph_type: "Line"
+          graph_type: "Line",
+          show_total: true,
+          show_average: true
         }.each do |k, v|
           instance_variable_set("@#{k}", options[k] || v)
         end
@@ -56,8 +58,8 @@ module Mergometer
 
         def table_fields
           @table_fields ||= [first_column_name] + table_keys
-          @table_fields.push("Total") if add_total?
-          @table_fields.push("Average") if add_average?
+          @table_fields.push("Total") if show_total?
+          @table_fields.push("Average") if show_average?
         end
 
         def gruff_labels
@@ -77,11 +79,11 @@ module Mergometer
             new_entry = ([first_column_name => key] + entries.each_with_index.map do |v, i|
               { table_keys[i] => v }
             end)
-            new_entry.push("Total" => sum[key]) if add_total?
-            new_entry.push("Average" => average[key]) if add_average?
+            new_entry.push("Total" => sum[key]) if show_total?
+            new_entry.push("Average" => average[key]) if show_average?
             new_entry.reduce({}, :merge)
           end
-          if add_average?
+          if show_average?
             @table_entries.sort_by { |h| h["Average"] }.reverse
           else
             @table_entries
@@ -143,12 +145,12 @@ module Mergometer
           raise NotImplementedError
         end
 
-        def add_total?
-          true
+        def show_total?
+          @show_total
         end
 
-        def add_average?
-          true
+        def show_average?
+          @show_average
         end
 
         def average

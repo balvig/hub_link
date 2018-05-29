@@ -29,7 +29,7 @@ module Mergometer
           end
         end
 
-        def add_total?
+        def show_total?
           false
         end
     end
