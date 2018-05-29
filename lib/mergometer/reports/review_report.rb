@@ -5,8 +5,8 @@ module Mergometer
   module Reports
     class ReviewReport < BaseReport
       def print_report
-        puts "PRs awaiting review: #{prs.size}"
         super
+        puts "PRs awaiting review: #{prs.size}"
       end
 
       private

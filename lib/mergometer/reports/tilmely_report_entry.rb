@@ -1,11 +1,7 @@
 module Mergometer
   module Reports
-    class WeeklyReportEntry
-
-      attr_accessor :week
-
-      def initialize(week:, prs:)
-        @week = week
+    class TimelyReportEntry
+      def initialize(prs:)
         @prs = prs
       end
 
@@ -15,7 +11,7 @@ module Mergometer
 
       private
 
-        attr_accessor :prs
+        attr_reader :prs
     end
   end
 end

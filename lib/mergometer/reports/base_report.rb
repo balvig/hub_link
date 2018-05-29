@@ -73,7 +73,12 @@ module Mergometer
             new_entry.push("Total" => sum[key]) if add_total?
             new_entry.push("Average" => average[key]) if add_average?
             new_entry.reduce({}, :merge)
-          end.sort_by { |h| h["Average"] }.reverse
+          end
+          if add_average?
+            @table_entries.sort_by { |h| h["Average"] }.reverse
+          else
+            @table_entries
+          end
         end
 
         def grouped_entries_by_time_and_user
