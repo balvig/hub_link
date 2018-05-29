@@ -1,6 +1,4 @@
 require "progress_bar"
-require "mergometer/pull_request"
-require "mergometer/pull_requests"
 
 module Mergometer
   class Report

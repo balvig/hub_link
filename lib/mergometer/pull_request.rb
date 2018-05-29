@@ -5,6 +5,7 @@ module Mergometer
     QUICK_FIX_CUTOFF = 6 # Changes
     LONG_RUNNING_LENGTH = 5 * 24 # Days
     HEAVILY_COMMENTED_COUNT = 20 # Comments
+    attr_accessor :data
 
     def self.search(filter)
       Octokit.search_issues(filter).items.map { |item| new(item) }
@@ -103,7 +104,7 @@ module Mergometer
     end
 
     def merged?
-      data.state == "merged"
+      data.state == "closed" && data.merged_at != "nil"
     end
 
     def wip?
@@ -116,8 +117,6 @@ module Mergometer
 
     private
 
-      attr_accessor :data
-
       def created_at
         data.created_at
       end
@@ -128,7 +127,7 @@ module Mergometer
 
       def fetch_reviews
         Octokit.pull_request_reviews(repo, number).reject do |review|
-          review.user.login.end_with?("bot")
+          review.user.login.include?("bot")
         end
       end
 
