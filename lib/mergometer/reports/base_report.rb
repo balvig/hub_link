@@ -94,12 +94,21 @@ module Mergometer
           end
         end
 
-        def grouped_prs_by_time(type = @group_by.to_sym)
-          @grouped_prs_by ||= prs.sort_by(&type).group_by(&type)
+        def grouped_prs_by_time(type = @group_by)
+          @grouped_prs_by ||= prs.sort_by(&type.to_sym).group_by(&type.to_sym)
         end
 
         def grouped_prs_by_users
           @grouped_prs_by_users ||= prs.group_by(&:user)
+        end
+
+        def grouped_prs_by_reviewers
+          @grouped_prs_by_reviewers ||= Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, user|
+            pr.reviewers.include?(user)
+          end.inject({}) do |grouped_prs, user_count_entry|
+            grouped_prs[user_count_entry.user] = user_count_entry
+            grouped_prs
+          end
         end
 
         def users
