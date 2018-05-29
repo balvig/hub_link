@@ -152,7 +152,7 @@ module Mergometer
         end
 
         def prs
-          @prs
+          @prs.select(&:merged?)
         end
     end
   end

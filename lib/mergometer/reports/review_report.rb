@@ -3,43 +3,30 @@ require "mergometer/reports/aggregate"
 
 module Mergometer
   module Reports
-    class ReviewReport < Report
-      def render
+    class ReviewReport < BaseReport
+      def print_report
+        puts "PRs awaiting review: #{prs.size}"
         super
-        puts "PRs awaiting review: #{prs_awaiting_review.size}"
-        puts "https://github.com/cookpad/global-web/pulls?" + { q: awaiting_review_filter }.to_query
       end
 
       private
 
-        def prs_awaiting_review
-          @_prs_awaiting_review ||= PullRequest.search(awaiting_review_filter)
+        def first_column_name
+          "username"
         end
 
-        def awaiting_review_filter
-          "#{repo_query} is:pr is:open review:required NOT [WIP]"
+        def table_keys
+          @table_keys ||= grouped_entries_by_time_and_user.keys.map(&:to_date).map { |d| d.strftime("%Y-%m-%d") }
         end
 
-        def fields
-          %i(user count)
+        def data_sets
+          @data_sets ||= grouped_entries_by_time_and_user.values.flatten.group_by(&:user).map do |k, v|
+            [k, v.map(&:count)]
+          end.to_h
         end
 
-        def filter
-          "#{repo_query} type:pr created:>=#{from}"
-        end
-
-        def fields_to_preload
-          %i(reviewers)
-        end
-
-        def entries
-          Aggregate.new(prs: prs, users: reviewers_in_prs).run do |pr, user|
-            pr.reviewers.include?(user)
-          end
-        end
-
-        def reviewers_in_prs
-          prs.flat_map(&:reviewers).uniq
+        def prs
+          @prs.select(&:review_required?)
         end
     end
   end
