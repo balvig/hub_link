@@ -41,7 +41,7 @@ module Mergometer
       def save_graph_to_image(type: @graph_type)
         g = Object.const_get("Gruff::#{type}").new
         g.title = @name
-        g.labels = table_keys.to_h
+        g.labels = gruff_labels
         data_sets.each do |key, set|
           g.data key.to_sym, set
         end
@@ -53,6 +53,14 @@ module Mergometer
       private
 
         attr_reader :prs
+
+        def gruff_labels
+          labels = {}
+          table_keys.each_with_index do |v, i|
+            labels[i] = v
+          end
+          labels
+        end
 
         def default_name
           self.class.name.demodulize
