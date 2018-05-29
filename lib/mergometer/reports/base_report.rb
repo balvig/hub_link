@@ -1,5 +1,7 @@
 require "csv"
+require "hirb"
 require "gruff"
+require "progress_bar"
 
 module Mergometer
   module Reports
@@ -44,7 +46,7 @@ module Mergometer
         table_entries
       end
 
-      def save_graph_to_image(type: @graph_type)
+      def save_graph(type: @graph_type)
         g = Object.const_get("Gruff::#{type}").new
         g.title = @name
         g.labels = gruff_labels

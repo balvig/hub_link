@@ -1,6 +1,3 @@
-require "mergometer/report"
-require "mergometer/reports/aggregate"
-
 module Mergometer
   module Reports
     class ReviewReport < BaseReport

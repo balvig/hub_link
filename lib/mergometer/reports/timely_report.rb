@@ -27,8 +27,8 @@ module Mergometer
       end
 
       def entries
-        grouped_prs_by_time.map do |week, weekly_prs|
-          [week.strftime("%Y-%m-%d"), TimelyReportEntry.new(prs: weekly_prs)]
+        grouped_prs_by_time.map do |time, timely_prs|
+          [time.strftime("%Y-%m-%d"), TimelyReportEntry.new(prs: timely_prs)]
         end.to_h
       end
 
@@ -38,6 +38,10 @@ module Mergometer
 
       def show_average?
         false
+      end
+
+      def prs
+        @prs
       end
     end
   end

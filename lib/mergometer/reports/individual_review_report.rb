@@ -16,6 +16,10 @@ module Mergometer
             [k, v.map(&:count)]
           end.to_h
         end
+
+        def prs
+          @prs
+        end
     end
   end
 end
