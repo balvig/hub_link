@@ -15,7 +15,7 @@ module Mergometer
           end
           result
         end.map do |user, count|
-          { user: user, count: count }
+          OpenStruct.new(user: user, count: count)
         end
       end
 

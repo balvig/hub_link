@@ -16,19 +16,13 @@ module Mergometer
         ["PR opened"]
       end
 
-      def data_sets
-        @data_sets ||= entries.map do |k, v|
-          [k, [v.send(:count)]]
-        end.to_h
-      end
-
       def median
-        Math.median(entries.map(&:count)).round(2)
+        Math.median(data_sets.values.first).round(2)
       end
 
-      def entries
-        grouped_prs_by_time.map do |time, timely_prs|
-          [time.strftime("%Y-%m-%d"), timely_prs.size]
+      def data_sets
+        @data_sets ||= grouped_prs_by_time.map do |time, timely_prs|
+          [time.strftime("%Y-%m-%d"), [timely_prs.count]]
         end.to_h
       end
 
