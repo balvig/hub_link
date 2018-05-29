@@ -11,9 +11,13 @@ module Mergometer
           group_by: "week",
           graph_type: "Line",
           show_total: true,
-          show_average: true
+          show_average: true,
+          load_reviews: false
         }.each do |k, v|
           instance_variable_set("@#{k}", options[k] || v)
+        end
+        if @load_reviews
+          prs.each(&:reviews)
         end
       end
 

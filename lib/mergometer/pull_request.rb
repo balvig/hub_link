@@ -98,6 +98,10 @@ module Mergometer
       @_reviewers ||= reviews.map(&:user).map(&:login).uniq
     end
 
+    def reviews
+      @_reviews ||= fetch_reviews
+    end
+
     def open?
       data.state == "open"
     end
@@ -120,10 +124,6 @@ module Mergometer
 
       def created_at
         data.created_at
-      end
-
-      def reviews
-        @_reviews ||= fetch_reviews
       end
 
       def fetch_reviews
