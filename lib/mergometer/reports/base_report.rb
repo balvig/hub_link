@@ -1,3 +1,4 @@
+require "csv"
 require "gruff"
 
 module Mergometer
@@ -75,7 +76,7 @@ module Mergometer
         end
 
         def grouped_entries_by_time_and_user
-          @grouped_entries_by_time_and_user ||= grouped_prs_by(type: @group_by).inject({}) do |result, (time, prs)|
+          @grouped_entries_by_time_and_user ||= grouped_prs_by(@group_by).inject({}) do |result, (time, prs)|
             result[time] = Reports::Aggregate.new(prs: prs, users: users).run do |pr, user|
               pr.user == user
             end
@@ -84,7 +85,7 @@ module Mergometer
         end
 
         def grouped_entries_by_time_and_reviewer
-          @grouped_entries_by_time_and_reviewer ||= grouped_prs_by(type: @group_by).inject({}) do |result, (time, prs)|
+          @grouped_entries_by_time_and_reviewer ||= grouped_prs_by(@group_by).inject({}) do |result, (time, prs)|
             result[time] = Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, user|
               pr.reviewers.include?(user)
             end
@@ -92,7 +93,7 @@ module Mergometer
           end
         end
 
-        def grouped_prs_by(type: :week)
+        def grouped_prs_by(type)
           @grouped_prs_by ||= prs.sort_by(&type).group_by(&type)
         end
 
