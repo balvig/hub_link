@@ -8,7 +8,7 @@ module Mergometer
       end
 
       def average
-        (sum / count).round(2)
+        @average ||= Math.mean(values).round(2)
       end
 
       def sum

@@ -94,8 +94,8 @@ module Mergometer
           end
         end
 
-        def grouped_entries_by_time_and_user
-          @grouped_entries_by_time_and_user ||= grouped_prs_by_time.inject({}) do |result, (time, prs)|
+        def grouped_prs_by_time_and_user
+          @grouped_prs_by_time_and_user ||= grouped_prs_by_time.inject({}) do |result, (time, prs)|
             result[time] = Reports::Aggregate.new(prs: prs, users: users).run do |pr, user|
               pr.user == user
             end
@@ -103,8 +103,8 @@ module Mergometer
           end
         end
 
-        def grouped_entries_by_time_and_reviewer
-          @grouped_entries_by_time_and_reviewer ||= grouped_prs_by_time.inject({}) do |result, (time, prs)|
+        def grouped_prs_by_time_and_reviewer
+          @grouped_prs_by_time_and_reviewer ||= grouped_prs_by_time.inject({}) do |result, (time, prs)|
             result[time] = Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, user|
               pr.reviewers.include?(user)
             end
@@ -120,13 +120,8 @@ module Mergometer
           @grouped_prs_by_users ||= prs.group_by(&:user)
         end
 
-        def grouped_prs_by_reviewers
-          @grouped_prs_by_reviewers ||= Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, user|
-            pr.reviewers.include?(user)
-          end.inject({}) do |grouped_prs, user_count_entry|
-            grouped_prs[user_count_entry.user] = user_count_entry
-            grouped_prs
-          end
+        def grouped_prs_by_reviewer
+          @grouped_prs_by_reviewer ||= grouped_prs_by_time_and_reviewer.values.flatten.group_by(&:user)
         end
 
         def users
@@ -159,7 +154,7 @@ module Mergometer
 
         def average
           @average ||= data_sets.map do |k, v|
-            [k, (v.reduce(:+) / v.size.to_f).round(2)]
+            [k, Math.mean(v).round(2)]
           end.to_h
         end
 

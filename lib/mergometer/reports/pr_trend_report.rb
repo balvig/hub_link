@@ -16,7 +16,7 @@ module Mergometer
         def data_sets
           @data_sets ||= METRICS.map do |metric|
             ["average_#{metric}", grouped_prs_by_time.values.map do |prs|
-              PrTrendReportEntry.new(prs.map(&metric)).average
+              PrTrendReportEntry.new(prs.map(&metric).compact).average
             end]
           end.to_h
         end

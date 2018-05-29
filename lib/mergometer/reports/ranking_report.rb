@@ -20,7 +20,7 @@ module Mergometer
               rankings.send(metric)
             end]
           end + [["number_of_given_reviews", eligible_rankings.keys.map do |user|
-            grouped_prs_by_reviewers[user]&.count || 0
+            grouped_prs_by_reviewer[user]&.count || 0
           end]]).to_h
         end
 

@@ -60,7 +60,7 @@ module Mergometer
         attr_accessor :prs, :repos
 
         def calculate_metric(metric)
-          Math.mean(eligible_prs.map(&metric)).round(2)
+          Math.mean(eligible_prs.map(&metric).compact).round(2)
         end
 
         def eligible_prs

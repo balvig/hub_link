@@ -1,27 +1,27 @@
 module Mergometer
   module Reports
     def self.contribution_report(repos)
-      Reports::ContributionReport.new(PullRequests.last_week(repos).prs)
+      Reports::ContributionReport.new(PullRequests.last_week(repos).prs, show_average: false, show_total: false)
     end
 
     def self.individual_review_report(repos)
-      Reports::IndividualReviewReport.new(PullRequests.last_week(repos).prs, load_reviews: true)
+      Reports::IndividualReviewReport.new(PullRequests.last_week(repos).prs, load_reviews: true, show_average: false, show_total: false)
     end
 
     def self.pr_trend_report(repos)
-      Reports::PrTrendReport.new(PullRequests.last_week(repos).prs, load_review: true)
+      Reports::PrTrendReport.new(PullRequests.last_week(repos).prs, load_review: true, show_average: false, show_total: false)
     end
 
     def self.ranking_report(repos)
-      Reports::RankingReport.new(PullRequests.last_week(repos).prs, load_review: true)
+      Reports::RankingReport.new(PullRequests.last_week(repos).prs, load_review: true, show_average: false, show_total: false)
     end
 
     def self.review_report(repos)
-      Reports::ReviewReport.new(PullRequests.last_week(repos).prs, load_reviews: true)
+      Reports::ReviewReport.new(PullRequests.last_week(repos).prs, load_reviews: true, show_average: false, show_total: false)
     end
 
     def self.weekly_report(repos)
-      Reports::TimelyReport.new(PullRequests.last_week(repos).prs)
+      Reports::TimelyReport.new(PullRequests.last_week(repos).prs, show_average: false, show_total: false)
     end
 
     def self.save_all_to_csv(repos)
