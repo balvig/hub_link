@@ -23,11 +23,11 @@ module Mergometer
           end
         end
 
-        p "#{@name} CSV exported."
+        puts "#{@name} CSV exported."
       end
 
       def print_report
-        p Hirb::Helpers::Table.render(
+        puts Hirb::Helpers::Table.render(
           table_entries,
           unicode: true,
           resize: false,
@@ -48,7 +48,7 @@ module Mergometer
         end
         g.write("#{@name}.png")
 
-        p "#{@name} PNG exported."
+        puts "#{@name} PNG exported."
       end
 
       private

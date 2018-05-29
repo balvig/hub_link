@@ -7,4 +7,8 @@ rescue NameError
   puts "Report not found, must be one of: \n\n" + reports.join("\n")
   exit
 end
-report_type.new(ARGV[0], from: ARGV[2]).run
+if ARGV[2]
+  report_type.new(Mergometer::PullRequests.search(ARGV[0], from: ARGV[2]).prs).print_report
+else
+  report_type.new(Mergometer::PullRequests.last_week(ARGV[0]).prs).print_report
+end
