@@ -1,6 +1,8 @@
 module Mergometer
   module Reports
     class PrTrendReportEntry
+      attr_reader :values
+
       def initialize(values)
         @values = values
       end
@@ -9,17 +11,13 @@ module Mergometer
         (sum / count).round(2)
       end
 
-      private
+      def sum
+        @sum ||= values.sum
+      end
 
-        attr_reader :values
-
-        def sum
-          @sum ||= values.sum
-        end
-
-        def count
-          @count ||= values.size.to_f
-        end
+      def count
+        @count ||= values.size.to_f
+      end
     end
   end
 end
