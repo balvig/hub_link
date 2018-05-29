@@ -90,7 +90,7 @@ module Mergometer
       reviewers_count == 0 && open? && !wip?
     end
 
-    def reviewers_count
+    def number_of_given_reviews
       reviewers.size
     end
 

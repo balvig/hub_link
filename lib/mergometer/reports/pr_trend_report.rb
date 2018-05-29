@@ -1,44 +1,36 @@
-require "csv"
-require "mergometer/report"
-require "mergometer/reports/pr_trend_report_entry"
-
 module Mergometer
   module Reports
-    class PrTrendReport < Report
-      METRICS = %i(approval_time time_to_first_review merge_time)
-      GROUPING = :week
-
-      def render
-        CSV.open("pr_trend_report.csv", "w") do |csv|
-          csv << [nil] + grouped_prs.keys.map(&:to_date)
-          METRICS.each do |metric|
-            entries = grouped_prs.map do |date, prs|
-              PrTrendReportEntry.new(date, prs.map(&metric))
-            end
-
-            csv << [metric.to_s] + entries.map(&:value)
-          end
-        end
-
-        puts "CSV exported."
-      end
+    class PrTrendReport < BaseReport
+      METRICS = %i(approval_time time_to_first_review merge_time number_of_given_reviews).freeze
 
       private
 
-        def fields_to_preload
-          METRICS
+        def first_column_name
+          "Metric, time in hours"
         end
 
-        def grouped_prs
-          @_grouped_prs ||= eligible_prs.sort_by(&GROUPING).group_by(&GROUPING)
+        def table_keys
+          @table_keys ||= grouped_prs_by_time.keys.map(&:to_date)
         end
 
-        def eligible_prs
-          prs.reject do |pr|
+        def data_sets
+          @data_sets ||= METRICS.map do |metric|
+            ["average_#{metric}", grouped_prs_by_time.values.map do |prs|
+              PrTrendReportEntry.new(prs.map(&metric)).average
+            end]
+          end.to_h
+        end
+
+        def prs
+          @prs.reject do |pr|
             METRICS.any? do |metric|
               pr.public_send(metric).blank?
             end
           end
+        end
+
+        def add_total?
+          false
         end
     end
   end

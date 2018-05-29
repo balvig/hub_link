@@ -1,24 +1,23 @@
 module Mergometer
   module Reports
     class PrTrendReportEntry
-      attr_reader :date
+      attr_reader :values
 
-      def initialize(date, values)
-        @date = date
+      def initialize(values)
         @values = values
       end
 
-      def value
-        average
+      def average
+        (sum / count).round(2)
       end
 
-      private
+      def sum
+        @sum ||= values.sum
+      end
 
-        def average
-          @_average ||= values.sum / values.size
-        end
-
-        attr_reader :values
+      def count
+        @count ||= values.size.to_f
+      end
     end
   end
 end
