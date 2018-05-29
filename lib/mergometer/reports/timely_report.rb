@@ -28,7 +28,7 @@ module Mergometer
 
       def entries
         grouped_prs_by_time.map do |time, timely_prs|
-          [time.strftime("%Y-%m-%d"), TimelyReportEntry.new(prs: timely_prs)]
+          [time.strftime("%Y-%m-%d"), timely_prs.size]
         end.to_h
       end
 

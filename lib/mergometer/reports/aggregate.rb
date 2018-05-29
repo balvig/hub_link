@@ -1,5 +1,3 @@
-require "mergometer/reports/user_count_entry"
-
 module Mergometer
   module Reports
     class Aggregate
@@ -17,7 +15,7 @@ module Mergometer
           end
           result
         end.map do |user, count|
-          UserCountEntry.new(user: user, count: count)
+          { user: user, count: count }
         end
       end
 
