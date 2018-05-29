@@ -103,7 +103,7 @@ module Mergometer
     end
 
     def merged?
-      data.state == "merged"
+      data.state == "closed" && data.merged_at != "nil"
     end
 
     def wip?
@@ -128,7 +128,7 @@ module Mergometer
 
       def fetch_reviews
         Octokit.pull_request_reviews(repo, number).reject do |review|
-          review.user.login.end_with?("bot")
+          review.user.login.end_with?("bot", "[bot]")
         end
       end
 

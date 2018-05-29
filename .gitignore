@@ -9,4 +9,5 @@
 /tmp/
 *.csv
 *.pdf
+*.png
 .rubocop-https*

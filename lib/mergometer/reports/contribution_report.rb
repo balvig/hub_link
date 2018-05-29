@@ -4,45 +4,23 @@ require "mergometer/reports/aggregate"
 
 module Mergometer
   module Reports
-    class ContributionReport < Report
-      GROUPING = :week
-
-      def render
-        CSV.open("contribution_report.csv", "w") do |csv|
-          csv << [nil] + grouped_entries.keys.map(&:to_date)
-          data_sets.each do |user, entries|
-            csv << [user] + entries.map(&:count)
-          end
-        end
-
-        puts "CSV exported."
-      end
-
+    class ContributionReport < BaseReport
       private
 
-        def data_sets
-          grouped_entries.values.flatten.group_by(&:user)
+        def first_column_name
+          "username"
         end
 
-        def grouped_entries
-          @_grouped_entries ||= fetch_entries
-        end
-
-        def fetch_entries
-          grouped_prs.inject({}) do |result, (time, prs)|
-            result[time] = Aggregate.new(prs: prs, users: contributors).run do |pr, user|
-              pr.user == user
-            end
-          result
+        def table_keys
+          @_table_keys ||= grouped_entries_by_time_and_user.keys.map(&:to_date).map do |d|
+            d.strftime("%Y-%m-%d")
           end
         end
 
-        def contributors
-          @_contributors ||= prs.map(&:user).uniq
-        end
-
-        def grouped_prs
-          @_grouped_prs ||= prs.sort_by(&GROUPING).group_by(&GROUPING)
+        def data_sets
+          @_data_sets ||= grouped_entries_by_time_and_user.values.flatten.group_by(&:user).map do |k, v|
+            [k, v.map(&:count)]
+          end.to_h
         end
     end
   end
