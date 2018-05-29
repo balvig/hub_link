@@ -10,11 +10,11 @@ module Mergometer
         end
 
         def table_keys
-          @_table_keys ||= grouped_prs_by_time.keys.map(&:to_date)
+          @table_keys ||= grouped_prs_by_time.keys.map(&:to_date)
         end
 
         def data_sets
-          @_data_sets ||= METRICS.map do |metric|
+          @data_sets ||= METRICS.map do |metric|
             ["average_#{metric}", grouped_prs_by_time.values.map do |prs|
               PrTrendReportEntry.new(prs.map(&metric)).average
             end]
