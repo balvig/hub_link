@@ -27,9 +27,10 @@ module Mergometer
       end
 
       def print_report
-        puts Hirb::Helpers::Table.render(
+        puts Hirb::Helpers::AutoTable.render(
           table_entries,
           unicode: true,
+          fields: table_fields,
           resize: false,
           description: false
         )
@@ -52,6 +53,12 @@ module Mergometer
       end
 
       private
+
+        def table_fields
+          @table_fields ||= [first_column_name] + table_keys
+          @table_fields.push("Total") if add_total?
+          @table_fields.push("Average") if add_average?
+        end
 
         def gruff_labels
           labels = {}
