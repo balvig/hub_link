@@ -28,6 +28,10 @@ module Mergometer
             end
           end
         end
+
+        def add_total?
+          false
+        end
     end
   end
 end

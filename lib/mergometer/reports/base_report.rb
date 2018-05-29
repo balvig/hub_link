@@ -67,9 +67,12 @@ module Mergometer
 
         def table_entries
           @table_entries ||= data_sets.map do |key, entries|
-            ([first_column_name => key] + entries.each_with_index.map do |v, i|
+            new_entry = ([first_column_name => key] + entries.each_with_index.map do |v, i|
               { table_keys[i] => v }
-            end + ["Total" => sum[key]] + ["Average" => average[key]]).reduce({}, :merge)
+            end)
+            new_entry.push("Total" => sum[key]) if add_total?
+            new_entry.push("Average" => average[key]) if add_average?
+            new_entry.reduce({}, :merge)
           end.sort_by { |h| h["Average"] }.reverse
         end
 
@@ -117,6 +120,14 @@ module Mergometer
 
         def data_sets
           raise NotImplementedError
+        end
+
+        def add_total?
+          true
+        end
+
+        def add_average?
+          true
         end
 
         def average

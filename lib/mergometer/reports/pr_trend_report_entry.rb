@@ -1,8 +1,6 @@
 module Mergometer
   module Reports
     class PrTrendReportEntry
-      attr_reader :date
-
       def initialize(values)
         @values = values
       end
