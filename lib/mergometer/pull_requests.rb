@@ -1,97 +1,19 @@
 require "Date"
+require_relative "pull_requests_fetcher"
 
 module Mergometer
   class PullRequests
-    class << self
-      def search(repos, **options)
-        filter = query_from_options(options).map do |o|
-          "#{repo_query(repos)} #{o}"
-        end
-        pull_requests = new(filter.pop)
-        filter.each do |f|
-          pull_requests.merge(new(f))
-        end
-        pull_requests
-      end
+    extend Mergometer::PullRequestsFetcher
 
-      def this_week(repos, **options)
-        options[:from] = Date.today.beginning_of_week.strftime("%F")
-        options[:to] = Date.today.end_of_week.strftime("%F")
-        search(repos, **options)
-      end
+    attr_reader :prs
 
-      def last_week(repos, **options)
-        options[:from] = Date.today.last_week.beginning_of_week.strftime("%F")
-        options[:to] = Date.today.last_week.end_of_week.strftime("%F")
-        search(repos, **options)
-      end
-
-      def this_month(repos, **options)
-        options[:from] = Date.today.beginning_of_month.strftime("%F")
-        options[:to] = Date.today.end_of_month.strftime("%F")
-        search(repos, **options)
-      end
-
-      def last_month(repos, **options)
-        options[:from] = Date.today.last_month.beginning_of_month.strftime("%F")
-        options[:to] = Date.today.last_month.end_of_month.strftime("%F")
-        search(repos, **options)
-      end
-
-      def query_from_options(options)
-        options = {
-          type: "pr",
-          base: "master",
-          **options
-        }
-        if options[:from]
-          date_query_array(from: options[:from], to: options[:to]).map do |dq|
-            "#{filtered_query(options)} #{dq}"
-          end
+    def initialize(prs)
+      @prs = prs.map do |pr|
+        if pr.is_a? PullRequest
+          pr
         else
-          filtered_query(options)
+          PullRequest.new(pr)
         end
-      end
-
-      def filtered_query(options)
-        query = options[:query]
-        options.tap do |hs|
-          hs.delete(:from)
-          hs.delete(:to)
-          hs.delete(:query)
-        end
-        options.map { |k, v| "#{k}:#{v}" }.join(" ") + " #{query}"
-      end
-
-      def date_query_array(from:, to:)
-        to = to || Date.today.to_s
-        _, *dates = (Date.parse(from)..Date.parse(to)).group_by(&:beginning_of_month).map do |_, month|
-          month.first
-        end
-        req_dates = [Date.parse(from), *dates]
-        req_dates.each_with_index.map do |date, i|
-          "created:#{date}..#{(req_dates[i + 1] || Date.parse(to) + 1) - 1}"
-        end
-      end
-
-      def repo_query(repos)
-        if repos.is_a?(String)
-          repos.split(",")
-        elsif repos.is_a?(Array) && repos.first&.is_a?(String)
-          repos
-        else
-          raise "Invalid repo parameter"
-        end.map do |r|
-          "repo:#{r}"
-        end.join(" ")
-      end
-    end
-
-    attr_accessor :prs
-
-    def initialize(filter)
-      @prs = Octokit.search_issues(filter).items.map do |item|
-        PullRequest.new(item)
       end
     end
 
@@ -107,6 +29,10 @@ module Mergometer
       prs.select(&:merged?)
     end
 
+    def total_pr_count
+      count
+    end
+
     def size
       count
     end
@@ -114,5 +40,73 @@ module Mergometer
     def count
       prs.size
     end
+
+    def eligible_pr_count
+      eligible_prs.size
+    end
+
+    def problem_ratio
+      @problem_ratio ||= ((problematic_count / eligible_pr_count.to_f) * 100).round(2)
+    end
+
+    def quick_fix_ratio
+      @quick_fix_ratio ||= quick_fix_count / eligible_pr_count.to_f
+    end
+
+    def problematic_count
+      @problematic_count ||= prs.count(&:problematic?)
+    end
+
+    def quick_fix_count
+      @quick_fix_count ||= prs.count(&:quick_fix?)
+    end
+
+    def long_running_count
+      @long_running_count ||= prs.count(&:long_running?)
+    end
+
+    def heavily_commented_count
+      @heavily_commented_count ||= prs.count(&:heavily_commented?)
+    end
+
+    def inactive?
+      eligible_pr_count < 1
+    end
+
+    # Metrics
+
+    def average_comment_count
+      @comment_count ||= calculate_metric(:comment_count)
+    end
+
+    def average_merge_time
+      @merge_time ||= calculate_metric(:merge_time)
+    end
+
+    def average_changes
+      @changes ||= calculate_metric(:changes)
+    end
+
+    def average_approval_time
+      @average_approval_time ||= calculate_metric(:approval_time)
+    end
+
+    def average_time_to_first_review
+      @average_time_to_first_review ||= calculate_metric(:time_to_first_review)
+    end
+
+    def average_number_of_given_reviews
+      @average_number_of_given_reviews ||= calculate_metric(:number_of_given_reviews)
+    end
+
+    private
+
+      def calculate_metric(metric)
+        Math.mean(eligible_prs.map(&metric).compact).round(2)
+      end
+
+      def eligible_prs
+        @eligible_prs ||= prs.reject(&:quick_fix?)
+      end
   end
 end

@@ -1,14 +1,8 @@
-require "mergometer/core_ext/float"
-
 module Mergometer
   class PullRequest
     QUICK_FIX_CUTOFF = 6 # Changes
     LONG_RUNNING_LENGTH = 5 * 24 # Days
     HEAVILY_COMMENTED_COUNT = 20 # Comments
-
-    def self.search(filter)
-      Octokit.search_issues(filter).items.map { |item| new(item) }
-    end
 
     def initialize(data)
       @data = data
@@ -38,6 +32,14 @@ module Mergometer
       created_at.beginning_of_month
     end
 
+    def quarter
+      created_at.beginning_of_quarter
+    end
+
+    def year
+      created_at.beginning_of_year
+    end
+
     # Metrics
 
     def additions
@@ -65,7 +67,7 @@ module Mergometer
     end
 
     def comment_count
-      @_comment_count ||= data.comments + comment_data.size
+      @comment_count ||= data.comments + comment_data.size
     end
 
     def merge_time
@@ -95,11 +97,11 @@ module Mergometer
     end
 
     def reviewers
-      @_reviewers ||= reviews.map(&:user).map(&:login).uniq
+      @reviewers ||= reviews.map(&:user).map(&:login).uniq
     end
 
     def reviews
-      @_reviews ||= fetch_reviews
+      @reviews ||= fetch_reviews
     end
 
     def open?
@@ -115,7 +117,7 @@ module Mergometer
     end
 
     def changes
-      @_changes ||= extended_data.additions + extended_data.deletions
+      @changes ||= extended_data.additions + extended_data.deletions
     end
 
     private
@@ -141,11 +143,11 @@ module Mergometer
       end
 
       def comment_data
-        @_comment_data ||= Octokit.get(extended_data.review_comments_url)
+        @comment_data ||= Octokit.get(extended_data.review_comments_url)
       end
 
       def extended_data
-        @_extended_data ||= Octokit.get(data.pull_request.url)
+        @extended_data ||= Octokit.get(data.pull_request.url)
       end
 
       def repo

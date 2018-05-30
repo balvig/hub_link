@@ -17,8 +17,8 @@ module Mergometer
         end
 
         def data_sets
-          @data_sets ||= grouped_prs_by_time_and_user.values.flatten.group_by(&:user).map do |k, v|
-            [k, v.map(&:count)]
+          @data_sets ||= grouped_prs_by_time_and_user.values.first.keys.map do |user|
+            [user, grouped_prs_by_time_and_user.values.map { |grouped| grouped[user].count }]
           end.to_h
         end
 

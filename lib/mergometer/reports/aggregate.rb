@@ -10,13 +10,15 @@ module Mergometer
       def run(&block)
         prs.inject({}) do |result, pr|
           users.each do |user|
-            result[user] ||= 0
-            result[user] += 1 if yield(pr, user)
+            result[user] ||= []
+            if yield(pr, user)
+              result[user].push(pr)
+            end
           end
           result
-        end.map do |user, count|
-          OpenStruct.new(user: user, count: count)
-        end
+        end.map do |user, prs|
+          [user, OpenStruct.new(prs: prs, count: prs.count)]
+        end.to_h
       end
 
       private

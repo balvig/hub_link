@@ -33,6 +33,7 @@ module Mergometer
       end
 
       def print_report
+        puts @name
         puts Hirb::Helpers::AutoTable.render(
           table_entries,
           unicode: true,
@@ -105,8 +106,8 @@ module Mergometer
 
         def grouped_prs_by_time_and_reviewer
           @grouped_prs_by_time_and_reviewer ||= grouped_prs_by_time.inject({}) do |result, (time, prs)|
-            result[time] = Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, user|
-              pr.reviewers.include?(user)
+            result[time] = Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, reviewer|
+              pr.reviewers.include?(reviewer)
             end
             result
           end
@@ -116,12 +117,14 @@ module Mergometer
           @grouped_prs_by ||= prs.sort_by(&type.to_sym).group_by(&type.to_sym)
         end
 
-        def grouped_prs_by_users
-          @grouped_prs_by_users ||= prs.group_by(&:user)
+        def grouped_prs_by_user
+          @grouped_prs_by_user ||= prs.group_by(&:user)
         end
 
         def grouped_prs_by_reviewer
-          @grouped_prs_by_reviewer ||= grouped_prs_by_time_and_reviewer.values.flatten.group_by(&:user)
+          @grouped_prs_by_reviewer ||= Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, reviewer|
+            pr.reviewers.include?(reviewer)
+          end
         end
 
         def users
