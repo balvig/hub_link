@@ -1,6 +1,6 @@
 module Mergometer
   module Reports
-    class ReviewReport < BaseReport
+    class ReviewRequiredReport < BaseReport
       def print_report
         super
         puts "PRs awaiting review: #{prs.size}"
