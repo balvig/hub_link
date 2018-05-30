@@ -181,7 +181,7 @@ module Mergometer
         end
 
         def progress_bar
-          @_progress_bar ||= ProgressBar.new(@prs.size, :elapsed, :bar, :counter, :rate)
+          @progress_bar ||= ProgressBar.new(@prs.size, :elapsed, :bar, :counter, :rate)
         end
     end
   end
