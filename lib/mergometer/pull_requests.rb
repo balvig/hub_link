@@ -45,6 +45,10 @@ module Mergometer
       eligible_prs.size
     end
 
+    def review_required_count
+      prs.select(&:review_required?).size
+    end
+
     def problem_ratio
       @problem_ratio ||= ((problematic_count / eligible_pr_count.to_f) * 100).round(2)
     end

@@ -2,7 +2,7 @@ module Mergometer
   module Reports
     class RankingReport < BaseReport
       METRICS = %i(eligible_pr_count average_comment_count average_changes average_merge_time
-                   heavily_commented_count problem_ratio).freeze
+                   heavily_commented_count problem_ratio review_required_count).freeze
 
       private
 
@@ -19,7 +19,7 @@ module Mergometer
             [metric.to_s, eligible_rankings.map do |_user, rankings|
               rankings.send(metric)
             end]
-          end + [["number_of_given_reviews", eligible_rankings.keys.map do |user|
+          end + [["number_of_given_reviews_by_user", eligible_rankings.keys.map do |user|
             grouped_prs_by_reviewer[user]&.count || 0
           end]]).to_h
         end
@@ -36,6 +36,10 @@ module Mergometer
 
         def show_total?
           false
+        end
+
+        def prs
+          @prs
         end
     end
   end
