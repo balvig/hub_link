@@ -6,16 +6,16 @@ module Mergometer
         @users = users
       end
 
-      # whoa.... sort out this mess
       def run(&block)
         prs.inject({}) do |result, pr|
           users.each do |user|
-            result[user] ||= 0
-            result[user] += 1 if yield(pr, user)
+            result[user] ||= OpenStruct.new(prs: [], count: 0)
+            if yield(pr, user)
+              result[user].prs.push(pr)
+              result[user].count += 1
+            end
           end
           result
-        end.map do |user, count|
-          OpenStruct.new(user: user, count: count)
         end
       end
 

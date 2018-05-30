@@ -16,8 +16,8 @@ module Mergometer
       Reports::RankingReport.new(PullRequests.last_week(repos).prs, load_review: true, show_average: false, show_total: false)
     end
 
-    def self.review_report(repos)
-      Reports::ReviewReport.new(PullRequests.last_week(repos).prs, load_reviews: true, show_average: false, show_total: false)
+    def self.review_required_report(repos)
+      Reports::ReviewRequiredReport.new(PullRequests.last_week(repos).prs, load_reviews: true, show_average: false, show_total: false)
     end
 
     def self.weekly_report(repos)
@@ -26,14 +26,17 @@ module Mergometer
 
     def self.save_all_to_csv(repos)
       all(repos).each(&:save_to_csv)
+      puts "Saved all reports to csv"
     end
 
     def self.print_all_reports(repos)
       all(repos).each(&:print_report)
+      puts "Printed all reports"
     end
 
     def self.save_all_graphs(repos)
       all(repos).each(&:save_graph)
+      puts "Saved all graphs as PNG"
     end
 
     def self.all(repos)

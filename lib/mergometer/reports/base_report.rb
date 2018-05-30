@@ -16,7 +16,11 @@ module Mergometer
           show_average: true,
           load_reviews: false
         }.each do |k, v|
-          instance_variable_set("@#{k}", options[k] || v)
+          if options[k].nil?
+            instance_variable_set("@#{k}", v)
+          else
+            instance_variable_set("@#{k}", options[k])
+          end
         end
         load_reviews if @load_reviews
       end
@@ -33,6 +37,7 @@ module Mergometer
       end
 
       def print_report
+        puts @name
         puts Hirb::Helpers::AutoTable.render(
           table_entries,
           unicode: true,
@@ -61,9 +66,10 @@ module Mergometer
       private
 
         def table_fields
-          @table_fields ||= [first_column_name] + table_keys
+          @table_fields = [first_column_name] + table_keys
           @table_fields.push("Total") if show_total?
           @table_fields.push("Average") if show_average?
+          @table_fields
         end
 
         def gruff_labels
@@ -105,8 +111,8 @@ module Mergometer
 
         def grouped_prs_by_time_and_reviewer
           @grouped_prs_by_time_and_reviewer ||= grouped_prs_by_time.inject({}) do |result, (time, prs)|
-            result[time] = Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, user|
-              pr.reviewers.include?(user)
+            result[time] = Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, reviewer|
+              pr.reviewers.include?(reviewer)
             end
             result
           end
@@ -116,12 +122,14 @@ module Mergometer
           @grouped_prs_by ||= prs.sort_by(&type.to_sym).group_by(&type.to_sym)
         end
 
-        def grouped_prs_by_users
-          @grouped_prs_by_users ||= prs.group_by(&:user)
+        def grouped_prs_by_user
+          @grouped_prs_by_user ||= prs.group_by(&:user)
         end
 
         def grouped_prs_by_reviewer
-          @grouped_prs_by_reviewer ||= grouped_prs_by_time_and_reviewer.values.flatten.group_by(&:user)
+          @grouped_prs_by_reviewer ||= Reports::Aggregate.new(prs: prs, users: reviewers).run do |pr, reviewer|
+            pr.reviewers.include?(reviewer)
+          end
         end
 
         def users
@@ -178,7 +186,7 @@ module Mergometer
         end
 
         def progress_bar
-          @_progress_bar ||= ProgressBar.new(@prs.size, :elapsed, :bar, :counter, :rate)
+          @progress_bar ||= ProgressBar.new(@prs.size, :elapsed, :bar, :counter, :rate)
         end
     end
   end

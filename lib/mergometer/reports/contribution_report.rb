@@ -8,14 +8,14 @@ module Mergometer
         end
 
         def table_keys
-          @_table_keys ||= grouped_prs_by_time_and_user.keys.map(&:to_date).map do |d|
+          @table_keys ||= grouped_prs_by_time_and_user.keys.map do |d|
             d.strftime("%Y-%m-%d")
           end
         end
 
         def data_sets
-          @_data_sets ||= grouped_prs_by_time_and_user.values.flatten.group_by(&:user).map do |k, v|
-            [k, v.map(&:count)]
+          @data_sets ||= grouped_prs_by_time_and_user.values.first.keys.map do |user|
+            [user, grouped_prs_by_time_and_user.values.map { |grouped| grouped[user].count }]
           end.to_h
         end
     end
