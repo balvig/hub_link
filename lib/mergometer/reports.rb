@@ -26,14 +26,17 @@ module Mergometer
 
     def self.save_all_to_csv(repos)
       all(repos).each(&:save_to_csv)
+      puts "Saved all reports to csv"
     end
 
     def self.print_all_reports(repos)
       all(repos).each(&:print_report)
+      puts "Printed all reports"
     end
 
     def self.save_all_graphs(repos)
       all(repos).each(&:save_graph)
+      puts "Saved all graphs as PNG"
     end
 
     def self.all(repos)
