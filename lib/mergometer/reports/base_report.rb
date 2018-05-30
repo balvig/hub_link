@@ -16,7 +16,11 @@ module Mergometer
           show_average: true,
           load_reviews: false
         }.each do |k, v|
-          instance_variable_set("@#{k}", options[k] || v)
+          if options[k].nil?
+            instance_variable_set("@#{k}", v)
+          else
+            instance_variable_set("@#{k}", options[k])
+          end
         end
         load_reviews if @load_reviews
       end
@@ -62,9 +66,10 @@ module Mergometer
       private
 
         def table_fields
-          @table_fields ||= [first_column_name] + table_keys
+          @table_fields = [first_column_name] + table_keys
           @table_fields.push("Total") if show_total?
           @table_fields.push("Average") if show_average?
+          @table_fields
         end
 
         def gruff_labels
