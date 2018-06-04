@@ -1,6 +1,15 @@
 module Mergometer
   module Reports
     class IndividualReviewReport < BaseReport
+      def print_report
+        super
+        puts "PRs awaiting review: #{review_required_count}"
+      end
+
+      def review_required_count
+        prs.select(&:review_required?).size
+      end
+
       private
 
         def first_column_name
