@@ -16,48 +16,56 @@ module Mergometer
     end
 
     def created_this_week(repos, **options)
+      options[:created_at] = {}
       options[:created_at][:from] = Date.today.beginning_of_week.strftime("%F")
       options[:created_at][:to] = Date.today.end_of_week.strftime("%F")
       search(repos, **options)
     end
 
     def created_last_week(repos, **options)
+      options[:created_at] = {}
       options[:created_at][:from] = Date.today.last_week.beginning_of_week.strftime("%F")
       options[:created_at][:to] = Date.today.last_week.end_of_week.strftime("%F")
       search(repos, **options)
     end
 
     def created_this_month(repos, **options)
+      options[:created_at] = {}
       options[:created_at][:from] = Date.today.beginning_of_month.strftime("%F")
       options[:created_at][:to] = Date.today.end_of_month.strftime("%F")
       search(repos, **options)
     end
 
     def created_last_month(repos, **options)
+      options[:created_at] = {}
       options[:created_at][:from] = Date.today.last_month.beginning_of_month.strftime("%F")
       options[:created_at][:to] = Date.today.last_month.end_of_month.strftime("%F")
       search(repos, **options)
     end
 
     def updated_this_week(repos, **options)
+      options[:updated_at] = {}
       options[:updated_at][:from] = Date.today.beginning_of_week.strftime("%F")
       options[:updated_at][:to] = Date.today.end_of_week.strftime("%F")
       search(repos, **options)
     end
 
     def updated_last_week(repos, **options)
+      options[:updated_at] = {}
       options[:updated_at][:from] = Date.today.last_week.beginning_of_week.strftime("%F")
       options[:updated_at][:to] = Date.today.last_week.end_of_week.strftime("%F")
       search(repos, **options)
     end
 
     def updated_this_month(repos, **options)
+      options[:updated_at] = {}
       options[:updated_at][:from] = Date.today.beginning_of_month.strftime("%F")
       options[:updated_at][:to] = Date.today.end_of_month.strftime("%F")
       search(repos, **options)
     end
 
     def updated_last_month(repos, **options)
+      options[:updated_at] = {}
       options[:updated_at][:from] = Date.today.last_month.beginning_of_month.strftime("%F")
       options[:updated_at][:to] = Date.today.last_month.end_of_month.strftime("%F")
       search(repos, **options)
@@ -85,8 +93,8 @@ module Mergometer
     def filtered_query(options)
       query = options[:query]
       options.tap do |hs|
-        hs.delete(:from)
-        hs.delete(:to)
+        hs.delete(:created_at)
+        hs.delete(:updated_at)
         hs.delete(:query)
       end
       options.map { |k, v| "#{k}:#{v}" }.join(" ") + " #{query}"
