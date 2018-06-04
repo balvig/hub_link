@@ -140,22 +140,6 @@ module Mergometer
           @reviewers ||= prs.flat_map(&:reviewers).uniq
         end
 
-        def first_column_name
-          raise NotImplementedError
-        end
-
-        def table_keys
-          raise NotImplementedError
-        end
-
-        def data_sets
-          raise NotImplementedError
-        end
-
-        def prs
-          raise NotImplementedError
-        end
-
         def show_total?
           @show_total
         end
@@ -187,6 +171,22 @@ module Mergometer
 
         def progress_bar
           @progress_bar ||= ProgressBar.new(@prs.size, :elapsed, :bar, :counter, :rate)
+        end
+
+        def first_column_name
+          raise NotImplementedError
+        end
+
+        def table_keys
+          raise NotImplementedError
+        end
+
+        def data_sets
+          raise NotImplementedError
+        end
+
+        def prs
+          raise NotImplementedError
         end
     end
   end
