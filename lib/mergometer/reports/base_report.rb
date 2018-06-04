@@ -152,6 +152,10 @@ module Mergometer
           raise NotImplementedError
         end
 
+        def prs
+          raise NotImplementedError
+        end
+
         def show_total?
           @show_total
         end
@@ -170,10 +174,6 @@ module Mergometer
           @sum ||= data_sets.map do |k, v|
             [k, v.reduce(:+).round(2)]
           end.to_h
-        end
-
-        def prs
-          @prs.select(&:merged?)
         end
 
         def load_reviews

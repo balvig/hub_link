@@ -1,23 +1,23 @@
 module Mergometer
   module Reports
     def self.contribution_report(repos)
-      Reports::ContributionReport.new(PullRequests.last_week(repos).prs, show_average: false, show_total: false)
+      Reports::ContributionReport.new(PullRequests.updated_last_week(repos), show_average: false, show_total: false)
     end
 
     def self.individual_review_report(repos)
-      Reports::IndividualReviewReport.new(PullRequests.last_week(repos).prs, load_reviews: true, show_average: false, show_total: false)
+      Reports::IndividualReviewReport.new(PullRequests.updated_last_week(repos), load_reviews: true, show_average: false, show_total: false)
     end
 
     def self.pr_trend_report(repos)
-      Reports::PrTrendReport.new(PullRequests.last_week(repos).prs, load_review: true, show_average: false, show_total: false)
+      Reports::PrTrendReport.new(PullRequests.updated_last_week(repos), load_review: true, show_average: false, show_total: false)
     end
 
     def self.ranking_report(repos)
-      Reports::RankingReport.new(PullRequests.last_week(repos).prs, load_review: true, show_average: false, show_total: false)
+      Reports::RankingReport.new(PullRequests.created_last_week(repos), load_review: true, show_average: false, show_total: false)
     end
 
     def self.weekly_report(repos)
-      Reports::TimelyReport.new(PullRequests.last_week(repos).prs, show_average: false, show_total: false)
+      Reports::TimelyReport.new(PullRequests.created_last_week(repos), show_average: false, show_total: false)
     end
 
     def self.save_all_to_csv(repos)
