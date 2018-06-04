@@ -25,7 +25,7 @@ module Mergometer
         end
 
         def filter
-          "#{repo_query} type:pr created:>=#{1.week.ago.to_date}"
+          "#{repo_query} type:pr updated:>=#{1.week.ago.to_date}"
         end
 
         def fields_to_preload
