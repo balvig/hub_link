@@ -21,7 +21,7 @@ module Mergometer
   if ARGV[1]
     report_type.new(ARGV[1]).run
   else
-    puts "Usage: bin/run 'ReportName' 'organization/repo_name'" 
+    puts "Usage: bin/run report_name github_organization/repo_name"
     exit    
   end
 end
