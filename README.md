@@ -7,8 +7,10 @@ Tech OKR Metrics from GitHub
 ```
 git clone https://github.com/balvig/mergometer.git
 cd mergometer
-OCTOKIT_ACCESS_TOKEN=<token> bin/run
+OCTOKIT_ACCESS_TOKEN=<token> bin/run report_name github_organization/repo_name
 ```
+
+For currently supported reports, see: `lib/mergometer/reports`
 
 ## Development
 

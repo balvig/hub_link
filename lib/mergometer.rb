@@ -17,5 +17,11 @@ module Mergometer
     puts "Report not found, must be one of: \n\n" + reports.join("\n")
     exit
   end
-  report_type.new(ARGV[1]).run
+
+  if ARGV[1]
+    report_type.new(ARGV[1]).run
+  else
+    puts "Usage: bin/run 'ReportName' 'organization/repo_name'" 
+    exit    
+  end
 end
