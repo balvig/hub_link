@@ -6,5 +6,6 @@
 /doc/
 /pkg/
 /spec/reports/
-/tmp/
 *.csv
+/tmp
+!/tmp/.gitkeep
