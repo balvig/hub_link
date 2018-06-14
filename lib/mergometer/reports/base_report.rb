@@ -38,6 +38,7 @@ module Mergometer
 
       def print_report
         puts @name
+        puts "Total PRs: #{prs.size}"
         puts Hirb::Helpers::AutoTable.render(
           table_entries,
           unicode: true,
@@ -140,18 +141,6 @@ module Mergometer
           @reviewers ||= prs.flat_map(&:reviewers).uniq
         end
 
-        def first_column_name
-          raise NotImplementedError
-        end
-
-        def table_keys
-          raise NotImplementedError
-        end
-
-        def data_sets
-          raise NotImplementedError
-        end
-
         def show_total?
           @show_total
         end
@@ -172,10 +161,6 @@ module Mergometer
           end.to_h
         end
 
-        def prs
-          @prs.select(&:merged?)
-        end
-
         def load_reviews
           puts "Loading PR reviews"
           prs.each do |pr|
@@ -187,6 +172,22 @@ module Mergometer
 
         def progress_bar
           @progress_bar ||= ProgressBar.new(@prs.size, :elapsed, :bar, :counter, :rate)
+        end
+
+        def first_column_name
+          raise NotImplementedError
+        end
+
+        def table_keys
+          raise NotImplementedError
+        end
+
+        def data_sets
+          raise NotImplementedError
+        end
+
+        def prs
+          raise NotImplementedError
         end
     end
   end

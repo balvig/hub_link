@@ -124,6 +124,10 @@ module Mergometer
 
       attr_accessor :data
 
+      def updated_at
+        data.updated_at
+      end
+
       def created_at
         data.created_at
       end

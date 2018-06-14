@@ -15,27 +15,59 @@ module Mergometer
       @prs = PullRequests.new(Octokit.search_issues(query).items)
     end
 
-    def this_week(repos, **options)
-      options[:from] = Date.today.beginning_of_week.strftime("%F")
-      options[:to] = Date.today.end_of_week.strftime("%F")
+    def created_this_week(repos, **options)
+      options[:created_at] = {}
+      options[:created_at][:from] = Date.today.beginning_of_week.strftime("%F")
+      options[:created_at][:to] = Date.today.end_of_week.strftime("%F")
       search(repos, **options)
     end
 
-    def last_week(repos, **options)
-      options[:from] = Date.today.last_week.beginning_of_week.strftime("%F")
-      options[:to] = Date.today.last_week.end_of_week.strftime("%F")
+    def created_last_week(repos, **options)
+      options[:created_at] = {}
+      options[:created_at][:from] = Date.today.last_week.beginning_of_week.strftime("%F")
+      options[:created_at][:to] = Date.today.last_week.end_of_week.strftime("%F")
       search(repos, **options)
     end
 
-    def this_month(repos, **options)
-      options[:from] = Date.today.beginning_of_month.strftime("%F")
-      options[:to] = Date.today.end_of_month.strftime("%F")
+    def created_this_month(repos, **options)
+      options[:created_at] = {}
+      options[:created_at][:from] = Date.today.beginning_of_month.strftime("%F")
+      options[:created_at][:to] = Date.today.end_of_month.strftime("%F")
       search(repos, **options)
     end
 
-    def last_month(repos, **options)
-      options[:from] = Date.today.last_month.beginning_of_month.strftime("%F")
-      options[:to] = Date.today.last_month.end_of_month.strftime("%F")
+    def created_last_month(repos, **options)
+      options[:created_at] = {}
+      options[:created_at][:from] = Date.today.last_month.beginning_of_month.strftime("%F")
+      options[:created_at][:to] = Date.today.last_month.end_of_month.strftime("%F")
+      search(repos, **options)
+    end
+
+    def updated_this_week(repos, **options)
+      options[:updated_at] = {}
+      options[:updated_at][:from] = Date.today.beginning_of_week.strftime("%F")
+      options[:updated_at][:to] = Date.today.end_of_week.strftime("%F")
+      search(repos, **options)
+    end
+
+    def updated_last_week(repos, **options)
+      options[:updated_at] = {}
+      options[:updated_at][:from] = Date.today.last_week.beginning_of_week.strftime("%F")
+      options[:updated_at][:to] = Date.today.last_week.end_of_week.strftime("%F")
+      search(repos, **options)
+    end
+
+    def updated_this_month(repos, **options)
+      options[:updated_at] = {}
+      options[:updated_at][:from] = Date.today.beginning_of_month.strftime("%F")
+      options[:updated_at][:to] = Date.today.end_of_month.strftime("%F")
+      search(repos, **options)
+    end
+
+    def updated_last_month(repos, **options)
+      options[:updated_at] = {}
+      options[:updated_at][:from] = Date.today.last_month.beginning_of_month.strftime("%F")
+      options[:updated_at][:to] = Date.today.last_month.end_of_month.strftime("%F")
       search(repos, **options)
     end
 
@@ -45,9 +77,13 @@ module Mergometer
         base: "master",
         **options
       }
-      if options[:from]
-        date_query_array(from: options[:from], to: options[:to]).map do |dq|
-          "#{filtered_query(options)} #{dq}"
+      if options[:created_at]
+        date_query_array(from: options[:created_at][:from], to: options[:created_at][:to]).map do |dq|
+          "#{filtered_query(options)} created:#{dq}"
+        end
+      elsif options[:updated_at]
+        date_query_array(from: options[:updated_at][:from], to: options[:updated_at][:to]).map do |dq|
+          "#{filtered_query(options)} updated:#{dq}"
         end
       else
         filtered_query(options)
@@ -57,8 +93,8 @@ module Mergometer
     def filtered_query(options)
       query = options[:query]
       options.tap do |hs|
-        hs.delete(:from)
-        hs.delete(:to)
+        hs.delete(:created_at)
+        hs.delete(:updated_at)
         hs.delete(:query)
       end
       options.map { |k, v| "#{k}:#{v}" }.join(" ") + " #{query}"
@@ -71,7 +107,7 @@ module Mergometer
       end
       req_dates = [Date.parse(from), *dates]
       req_dates.each_with_index.map do |date, i|
-        "created:#{date}..#{(req_dates[i + 1] || Date.parse(to) + 1) - 1}"
+        "#{date}..#{(req_dates[i + 1] || Date.parse(to) + 1) - 1}"
       end
     end
 

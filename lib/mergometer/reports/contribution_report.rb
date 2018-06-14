@@ -18,6 +18,10 @@ module Mergometer
             [user, grouped_prs_by_time_and_user.values.map { |grouped| grouped[user].count }]
           end.to_h
         end
+
+        def prs
+          @prs
+        end
     end
   end
 end
