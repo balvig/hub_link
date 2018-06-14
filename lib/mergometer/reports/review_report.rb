@@ -7,13 +7,17 @@ module Mergometer
       def render
         super
         puts "PRs awaiting review: #{prs_awaiting_review.size}"
-        puts "https://github.com/cookpad/global-web/pulls?" + { q: awaiting_review_filter }.to_query
+        puts "https://github.com/#{repo}/pulls?#{awaiting_review_query_string}"
       end
 
       private
 
         def prs_awaiting_review
           @_prs_awaiting_review ||= PullRequest.search(awaiting_review_filter)
+        end
+
+        def awaiting_review_query_string
+          { q: awaiting_review_filter }.to_query
         end
 
         def awaiting_review_filter
