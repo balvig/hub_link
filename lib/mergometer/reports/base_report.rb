@@ -38,6 +38,7 @@ module Mergometer
 
       def print_report
         puts @name
+        puts "Total PRs: #{prs.size}"
         puts Hirb::Helpers::AutoTable.render(
           table_entries,
           unicode: true,
