@@ -1,8 +1,13 @@
+require "mergometer"
+
 module Mergometer
-  class Runner
-    def initialize(report_name:, repo_name:)
-      @report_name = report_name
-      @repo_name = repo_name
+  class Cli
+    def self.run(*args)
+      new(*args).run
+    end
+
+    def initialize(argv)
+      @argv = argv
     end
 
     def run
@@ -10,12 +15,15 @@ module Mergometer
     end
 
     private
+
+      attr_reader :argv
+
       def report_name
-        @report_name.presence || stop
+        argv[0].presence || stop
       end
 
       def repo_name
-        @repo_name.presence || stop
+        argv[1].presence || stop
       end
 
       def report
@@ -29,7 +37,7 @@ module Mergometer
       end
 
       def stop
-        puts "\nUsage: OCTOKIT_ACCESS_TOKEN=<token> bin/run <report_name> <github_org/repo_name>"
+        puts "\nUsage: OCTOKIT_ACCESS_TOKEN=<token> #{$0} <report_name> <github_org/repo_name>"
         puts "\nAvailable reports: \n\n" + available_reports.join("\n")
         exit
       end

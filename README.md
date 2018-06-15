@@ -4,13 +4,26 @@ Tech OKR Metrics from GitHub
 
 ## Usage
 
+You can either:
+- Clone this repository.
+- Install the gem.
+
+### Cloning this repository
 ```
 git clone https://github.com/balvig/mergometer.git
 cd mergometer
-OCTOKIT_ACCESS_TOKEN=<token> bin/run <report_name> <github_organization/repo_name>
+bundle
+OCTOKIT_ACCESS_TOKEN=<token> bundle exec exe/mergometer <report_name> <github_organization/repo_name>
 ```
 
-For currently supported reports, run: `bin/run` with no arguments.
+### Installing this gem
+_This will work only after the gem gets published to RubyGems._
+```
+gem install mergometer
+OCTOKIT_ACCESS_TOKEN=<token> mergometer <report_name> <github_organization/repo_name>
+```
+
+For currently supported reports, run `mergometer` with no arguments.
 
 ## Contributing
 
