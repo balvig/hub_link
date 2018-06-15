@@ -86,6 +86,10 @@ module Mergometer
       @_reviewers ||= reviews.map(&:user).map(&:login).uniq
     end
 
+    def reviews
+      @_reviews ||= fetch_reviews
+    end
+
     private
 
       attr_accessor :data
@@ -100,10 +104,6 @@ module Mergometer
 
       def created_at
         data.created_at
-      end
-
-      def reviews
-        @_reviews ||= fetch_reviews
       end
 
       def fetch_reviews

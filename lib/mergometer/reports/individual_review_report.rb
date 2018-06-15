@@ -41,7 +41,7 @@ module Mergometer
 
         def fetch_entries
           grouped_prs.inject({}) do |result, (time, prs)|
-            result[time] = Aggregate.new(prs: prs, users: all_reviewers).run do |pr, user|
+            result[time] = Aggregate.new(countables: prs, users: all_reviewers).run do |pr, user|
               pr.reviewers.include?(user)
             end
             result

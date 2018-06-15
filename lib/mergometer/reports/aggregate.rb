@@ -3,17 +3,17 @@ require "mergometer/reports/user_count_entry"
 module Mergometer
   module Reports
     class Aggregate
-      def initialize(prs:, users:)
-        @prs = prs
+      def initialize(countables:, users:)
+        @countables = countables
         @users = users
       end
 
       # whoa.... sort out this mess
       def run(&block)
-        prs.inject({}) do |result, pr|
+        countables.inject({}) do |result, countable|
           users.each do |user|
             result[user] ||= 0
-            result[user] += 1 if yield(pr, user)
+            result[user] += 1 if yield(countable, user)
           end
           result
         end.map do |user, count|
@@ -23,7 +23,7 @@ module Mergometer
 
       private
 
-        attr_reader :prs, :users
+        attr_reader :countables, :users
     end
   end
 end
