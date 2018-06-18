@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require "mergometer/cli"
 
-Mergometer::Cli.run(ARGV)
+Mergometer::Cli.run

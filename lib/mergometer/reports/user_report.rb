@@ -6,6 +6,7 @@ module Mergometer
 
       def initialize(prs, **options)
         @user = options[:user]
+        raise 'Need `user` parameter' unless @user
         super(prs, **options)
       end
 
