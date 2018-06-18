@@ -1,3 +1,5 @@
+# Refactor before launching gem
+
 /.bundle/
 /.yardoc
 /Gemfile.lock
@@ -11,3 +13,4 @@
 *.pdf
 *.png
 .rubocop-https*
+*.gem
