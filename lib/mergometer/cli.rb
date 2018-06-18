@@ -27,7 +27,7 @@ module Mergometer
       end
 
       def from
-        argv[2].presence || stop
+        argv[2].presence
       end
 
       def report
@@ -37,7 +37,7 @@ module Mergometer
       end
 
       def report_class_name
-        "Mergometer::Reports::#{report_name}"
+        "Mergometer::Reports.#{report_name}"
       end
 
       def stop

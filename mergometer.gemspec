@@ -25,19 +25,19 @@ Gem::Specification.new do |spec|
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib/mergometer.rb"]
+  spec.require_paths = ["lib"]
 
   spec.add_dependency "activesupport"
   spec.add_dependency "facets"
-  spec.add_dependency "faraday_middleware"
   spec.add_dependency "faraday-detailed_logger"
+  spec.add_dependency "faraday_middleware"
+  spec.add_dependency "gruff"
   spec.add_dependency "hirb"
   spec.add_dependency "octokit"
   spec.add_dependency "progress_bar"
-  spec.add_dependency "gruff"
 
   spec.add_development_dependency "bundler", "~> 1.12"
-  spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "minitest", "~> 5.0"
   spec.add_development_dependency "pry"
+  spec.add_development_dependency "rake", "~> 10.0"
 end
