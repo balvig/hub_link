@@ -20,7 +20,7 @@ module Mergometer
         end
 
         def prs
-          @prs
+          created_prs
         end
     end
   end

@@ -1,16 +1,11 @@
 module Mergometer
   module Reports
     class IndividualReviewReport < BaseReport
-      def print_report
-        super
-        puts "PRs awaiting review: #{review_required_count}"
-      end
-
-      def review_required_count
-        prs.select(&:review_required?).size
-      end
-
       private
+
+        def load_reviews?
+          true
+        end
 
         def first_column_name
           "username"
@@ -26,8 +21,12 @@ module Mergometer
           end.to_h
         end
 
+        def group_by
+          "updated_#{@group_by}"
+        end
+
         def prs
-          @prs
+          updated_prs.merged_prs
         end
     end
   end

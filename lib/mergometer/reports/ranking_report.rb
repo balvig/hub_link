@@ -6,6 +6,10 @@ module Mergometer
 
       private
 
+        def load_reviews?
+          true
+        end
+
         def first_column_name
           "Metric"
         end
@@ -37,7 +41,7 @@ module Mergometer
         end
 
         def prs
-          @prs
+          created_prs
         end
     end
   end

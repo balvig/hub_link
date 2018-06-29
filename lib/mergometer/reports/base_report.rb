@@ -6,23 +6,14 @@ require "progress_bar"
 module Mergometer
   module Reports
     class BaseReport
-      def initialize(prs, **options)
-        @prs = prs
-        {
-          name: default_name,
-          group_by: "week",
-          graph_type: "Line",
-          show_total: true,
-          show_average: true,
-          load_reviews: false
-        }.each do |k, v|
-          if options[k].nil?
-            instance_variable_set("@#{k}", v)
-          else
-            instance_variable_set("@#{k}", options[k])
-          end
+      def initialize(repos, from: nil, to: nil, **options)
+        @repos = repos
+        @from = from || Date.today.last_week.beginning_of_week.strftime("%F")
+        @to = to || Date.today.last_week.end_of_week.strftime("%F")
+        default_options.each do |k, v|
+          instance_variable_set("@#{k}", options[k] || v)
         end
-        load_reviews if @load_reviews
+        load_reviews if load_reviews?
       end
 
       def save_to_csv
@@ -65,6 +56,22 @@ module Mergometer
       end
 
       private
+
+        attr_reader :repos, :from, :to
+
+        def default_options
+          {
+            name: default_name,
+            group_by: "week",
+            graph_type: "Line",
+            show_total: true,
+            show_average: true
+          }
+        end
+
+        def load_reviews?
+          false
+        end
 
         def table_fields
           @table_fields = [first_column_name] + table_keys
@@ -119,8 +126,8 @@ module Mergometer
           end
         end
 
-        def grouped_prs_by_time(type = @group_by)
-          @grouped_prs_by ||= prs.sort_by(&type.to_sym).group_by(&type.to_sym)
+        def grouped_prs_by_time
+          @grouped_prs_by ||= prs.sort_by(&group_by.to_sym).group_by(&group_by.to_sym)
         end
 
         def grouped_prs_by_user
@@ -167,11 +174,15 @@ module Mergometer
             pr.review_required?
             progress_bar.increment!
           end
-          progress_bar.increment! @prs.size
+          progress_bar.increment! prs.size
         end
 
         def progress_bar
-          @progress_bar ||= ProgressBar.new(@prs.size, :elapsed, :bar, :counter, :rate)
+          @progress_bar ||= ProgressBar.new(prs.size, :elapsed, :bar, :counter, :rate)
+        end
+
+        def group_by
+          @group_by
         end
 
         def first_column_name
@@ -188,6 +199,14 @@ module Mergometer
 
         def prs
           raise NotImplementedError
+        end
+
+        def created_prs
+          @created_prs ||= PullRequests.search(repos, created_at: { from: from, to: to })
+        end
+
+        def updated_prs
+          @updated_prs ||= PullRequests.search(repos, updated_at: { from: from, to: to })
         end
     end
   end

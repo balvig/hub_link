@@ -1,22 +1,26 @@
 require "mergometer"
+require "optparse"
 
 module Mergometer
   class Cli
-    def self.run(*args)
-      new(*args).run
+    def self.run
+      new.run
     end
 
-    def initialize(argv)
-      @argv = argv
+    def initialize
+      @argv = *ARGV
+      @options = {}
+      parse_options
     end
 
     def run
-      report.new(repo_names, from: from).print_report
+      report.print_report
     end
 
     private
 
       attr_reader :argv
+      attr_accessor :options
 
       def report_name
         argv[1].presence || stop
@@ -26,22 +30,23 @@ module Mergometer
         argv[0].presence || stop
       end
 
-      def from
-        argv[2].presence
+      def parse_options
+        OptionParser.new do |opt|
+          opt.on("-f", "--from FROM_DATE", "Date from which it will fetch PRs") { |o| options[:from] = o }
+          opt.on("-u", "--user USERNAME", "Github username of user related to report (user_report)") { |o| options[:user] = o }
+        end.parse!
       end
 
       def report
-        Object.const_get(report_class_name)
-      rescue NameError
-        stop
-      end
-
-      def report_class_name
-        "Mergometer::Reports.#{report_name}"
+        if Mergometer::Reports.respond_to?(report_name)
+          Mergometer::Reports.public_send(report_name, repo_names, **options)
+        else
+          stop
+        end
       end
 
       def stop
-        puts "\nUsage: OCTOKIT_ACCESS_TOKEN=<token> #{$0} <comma_separated_github_org/repo_names> <report_name> <from>"
+        puts "\nUsage: OCTOKIT_ACCESS_TOKEN=<token> #{$0} <comma_separated_github_org/repo_names> <report_name> <options>"
         puts "\nAvailable reports: \n\n" + available_reports.join("\n")
         exit
       end

@@ -5,6 +5,10 @@ module Mergometer
 
       private
 
+        def load_reviews?
+          true
+        end
+
         def first_column_name
           "Metric, time in hours"
         end
@@ -21,8 +25,12 @@ module Mergometer
           end.to_h
         end
 
+        def group_by
+          "updated_#{@group_by}"
+        end
+
         def prs
-          @prs.reject do |pr|
+          updated_prs.reject do |pr|
             METRICS.any? do |metric|
               pr.public_send(metric).blank?
             end

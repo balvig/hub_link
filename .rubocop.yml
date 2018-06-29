@@ -1,5 +1,5 @@
-inherit_from:
-  - https://raw.githubusercontent.com/cookpad/guides/master/.rubocop.yml
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
 
-Rails:
-  Enabled: false
+Layout/IndentationConsistency:
+  EnforcedStyle: rails
