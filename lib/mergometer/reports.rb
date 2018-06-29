@@ -1,41 +1,37 @@
 module Mergometer
   module Reports
     def self.contribution_report(repos, **options)
-      Reports::ContributionReport.new(PullRequests.updated_last_week(repos), **options)
+      Reports::ContributionReport.new(repos, **options)
     end
 
     def self.individual_review_report(repos, **options)
-      Reports::IndividualReviewReport.new(PullRequests.updated_last_week(repos), **options)
+      Reports::IndividualReviewReport.new(repos, **options)
     end
 
     def self.pr_trend_report(repos, **options)
-      Reports::PrTrendReport.new(PullRequests.updated_last_week(repos),**options)
+      Reports::PrTrendReport.new(repos, **options)
     end
 
     def self.ranking_report(repos, **options)
-      Reports::RankingReport.new(PullRequests.created_last_week(repos),**options)
+      Reports::RankingReport.new(repos, **options)
     end
 
     def self.weekly_report(repos, **options)
-      Reports::TimelyReport.new(PullRequests.created_last_week(repos), **options)
-    end
-
-    def self.user_report(repos, **options)
-      Reports::UserReport.new(PullRequests.created_last_week(repos), **options)
+      Reports::TimelyReport.new(repos, **options)
     end
 
     def self.save_all_to_csv(repos, **options)
-      all(repos).each(&:save_to_csv)
+      all(repos, **options).each(&:save_to_csv)
       puts "Saved all reports to csv"
     end
 
     def self.print_all_reports(repos, **options)
-      all(repos).each(&:print_report)
+      all(repos, **options).each(&:print_report)
       puts "Printed all reports"
     end
 
     def self.save_all_graphs(repos, **options)
-      all(repos).each(&:save_graph)
+      all(repos, **options).each(&:save_graph)
       puts "Saved all graphs as PNG"
     end
 

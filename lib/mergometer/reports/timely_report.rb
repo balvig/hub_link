@@ -4,6 +4,11 @@ module Mergometer
       def print_report
         super
         puts "Median num of PRs/week: #{median}"
+        puts "PRs awaiting review: #{review_required_count}"
+      end
+
+      def review_required_count
+        prs.select(&:review_required?).size
       end
 
       private
@@ -35,7 +40,7 @@ module Mergometer
       end
 
       def prs
-        @prs
+        created_prs
       end
     end
   end

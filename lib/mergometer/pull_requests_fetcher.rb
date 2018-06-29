@@ -15,62 +15,6 @@ module Mergometer
       @prs = PullRequests.new(Octokit.search_issues(query).items)
     end
 
-    def created_this_week(repos, **options)
-      options[:created_at] = {}
-      options[:created_at][:from] = Date.today.beginning_of_week.strftime("%F")
-      options[:created_at][:to] = Date.today.end_of_week.strftime("%F")
-      search(repos, **options)
-    end
-
-    def created_last_week(repos, **options)
-      options[:created_at] = {}
-      options[:created_at][:from] = Date.today.last_week.beginning_of_week.strftime("%F")
-      options[:created_at][:to] = Date.today.last_week.end_of_week.strftime("%F")
-      search(repos, **options)
-    end
-
-    def created_this_month(repos, **options)
-      options[:created_at] = {}
-      options[:created_at][:from] = Date.today.beginning_of_month.strftime("%F")
-      options[:created_at][:to] = Date.today.end_of_month.strftime("%F")
-      search(repos, **options)
-    end
-
-    def created_last_month(repos, **options)
-      options[:created_at] = {}
-      options[:created_at][:from] = Date.today.last_month.beginning_of_month.strftime("%F")
-      options[:created_at][:to] = Date.today.last_month.end_of_month.strftime("%F")
-      search(repos, **options)
-    end
-
-    def updated_this_week(repos, **options)
-      options[:updated_at] = {}
-      options[:updated_at][:from] = Date.today.beginning_of_week.strftime("%F")
-      options[:updated_at][:to] = Date.today.end_of_week.strftime("%F")
-      search(repos, **options)
-    end
-
-    def updated_last_week(repos, **options)
-      options[:updated_at] = {}
-      options[:updated_at][:from] = Date.today.last_week.beginning_of_week.strftime("%F")
-      options[:updated_at][:to] = Date.today.last_week.end_of_week.strftime("%F")
-      search(repos, **options)
-    end
-
-    def updated_this_month(repos, **options)
-      options[:updated_at] = {}
-      options[:updated_at][:from] = Date.today.beginning_of_month.strftime("%F")
-      options[:updated_at][:to] = Date.today.end_of_month.strftime("%F")
-      search(repos, **options)
-    end
-
-    def updated_last_month(repos, **options)
-      options[:updated_at] = {}
-      options[:updated_at][:from] = Date.today.last_month.beginning_of_month.strftime("%F")
-      options[:updated_at][:to] = Date.today.last_month.end_of_month.strftime("%F")
-      search(repos, **options)
-    end
-
     def query_from_options(options)
       options = {
         type: "pr",
@@ -117,7 +61,7 @@ module Mergometer
       elsif repos.is_a?(Array) && repos.first&.is_a?(String)
         repos
       else
-        raise "Invalid repo parameter"
+        raise "Invalid repo parameter - #{repos}"
       end.map do |r|
         "repo:#{r}"
       end.join(" ")

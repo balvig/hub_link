@@ -40,6 +40,26 @@ module Mergometer
       created_at.beginning_of_year
     end
 
+    def updated_day
+      updated_at.beginning_of_day
+    end
+
+    def updated_week
+      updated_at.beginning_of_week
+    end
+
+    def updated_month
+      updated_at.beginning_of_month
+    end
+
+    def updated_quarter
+      updated_at.beginning_of_quarter
+    end
+
+    def updated_year
+      updated_at.beginning_of_year
+    end
+
     # Metrics
 
     def additions
@@ -89,7 +109,7 @@ module Mergometer
     end
 
     def review_required?
-      number_of_given_reviews == 0 && open? && !wip?
+      number_of_given_reviews.zero? && open? && !wip?
     end
 
     def number_of_given_reviews
@@ -109,7 +129,7 @@ module Mergometer
     end
 
     def merged?
-      data.state == "closed" && data.merged_at != "nil"
+      data.state == "closed" && merged_at != "nil"
     end
 
     def wip?
@@ -132,9 +152,13 @@ module Mergometer
         data.created_at
       end
 
+      def merged_at
+        data.merged_at
+      end
+
       def fetch_reviews
         Octokit.pull_request_reviews(repo, number).reject do |review|
-          review.user.login.end_with?("bot", "[bot]")
+          review.user.login.end_with?("bot", "[bot]") || review.user.type == "Bot"
         end
       end
 
