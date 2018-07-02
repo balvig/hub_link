@@ -4,6 +4,11 @@ require "mergometer/reports/aggregate"
 module Mergometer
   module Reports
     class ReviewReport < Report
+      def render
+        puts "Reviews last week: #{range}"
+        super
+      end
+
       private
 
         def fields
