@@ -2,25 +2,13 @@ require "mergometer/core_ext/float"
 require "mergometer/review"
 
 module Mergometer
-  class PullRequest
+  class PullRequest < SimpleDelegator
     def self.search(filter)
       Octokit.search_issues(filter).items.map { |item| new(item) }
     end
 
-    def initialize(data)
-      @data = data
-    end
-
-    def title
-      data.title
-    end
-
-    def number
-      data.number
-    end
-
     def user
-      data.user.login
+      super.login
     end
 
     def week
@@ -38,13 +26,13 @@ module Mergometer
     end
 
     def body_size
-      data.body.to_s.size
+      body.to_s.size
     end
 
     def merge_time
-      return if data.closed_at.blank?
+      return if closed_at.blank?
 
-      (data.closed_at - created_at).in_hours
+      (closed_at - created_at).in_hours
     end
 
     def time_to_first_review
@@ -69,18 +57,12 @@ module Mergometer
 
     private
 
-      attr_accessor :data
-
       def open?
-        data.state == "open"
+        state == "open"
       end
 
       def wip?
         title.include?("[WIP]")
-      end
-
-      def created_at
-        data.created_at
       end
 
       def fetch_reviews
@@ -99,10 +81,6 @@ module Mergometer
 
       def first_review
         reviews.first
-      end
-
-      def comment_data
-        @_comment_data ||= Octokit.get(extended_data.review_comments_url)
       end
 
       def extended_data
