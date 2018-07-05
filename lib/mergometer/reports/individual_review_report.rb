@@ -40,20 +40,24 @@ module Mergometer
         end
 
         def fetch_entries
-          grouped_prs.inject({}) do |result, (time, prs)|
-            result[time] = Aggregate.new(countables: prs, users: all_reviewers).run do |pr, user|
-              pr.reviewers.include?(user)
+          grouped_reviews.inject({}) do |result, (time, reviews)|
+            result[time] = Aggregate.new(countables: reviews, users: all_reviewers).run do |review, user|
+              review.user.login == user
             end
             result
           end
         end
 
-        def all_reviewers
-          @_all_reviewers ||= prs.flat_map(&:reviewers).uniq
+        def reviews_in_prs
+          @_reviews_in_prs ||= prs.flat_map(&:reviews)
         end
 
-        def grouped_prs
-          @_grouped_prs ||= prs.sort_by(&GROUPING).group_by(&GROUPING)
+        def all_reviewers
+          reviews_in_prs.flat_map(&:user).map(&:login).uniq
+        end
+
+        def grouped_reviews
+          @_grouped_reviews ||= reviews_in_prs.sort_by(&GROUPING).group_by(&GROUPING)
         end
     end
   end
