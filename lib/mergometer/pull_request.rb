@@ -19,6 +19,14 @@ module Mergometer
       created_at.beginning_of_month
     end
 
+    def reviewers
+      @_reviewers ||= reviews.map(&:user).map(&:login).uniq
+    end
+
+    def reviews
+      @_reviews ||= fetch_reviews
+    end
+
     # Metrics
     def additions
       extended_data.additions
@@ -46,14 +54,6 @@ module Mergometer
       (first_approval.submitted_at - created_at).in_hours
     end
 
-    def reviewers
-      @_reviewers ||= reviews.map(&:user).map(&:login).uniq
-    end
-
-    def reviews
-      @_reviews ||= fetch_reviews
-    end
-
     private
 
       def fetch_reviews
@@ -71,7 +71,7 @@ module Mergometer
       end
 
       def extended_data
-        @_extended_data ||= Octokit.get(data.pull_request.url)
+        @_extended_data ||= Octokit.get(pull_request.url)
       end
 
       def repo

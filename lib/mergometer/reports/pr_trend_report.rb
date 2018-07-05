@@ -5,12 +5,11 @@ require "mergometer/reports/pr_trend_report_entry"
 module Mergometer
   module Reports
     class PrTrendReport < Report
-      METRICS = %i(approval_time time_to_first_review merge_time)
+      METRICS = %i(approval_time time_to_first_review merge_time body_size additions)
       GROUPING = :week
 
       def render
-        CSV.open("pr_trend_report.csv", "w") do |csv|
-          csv << [nil] + grouped_prs.keys.map(&:to_date)
+        CSV.open("pr_trend_report.csv", "w", headers: csv_headers) do |csv|
           METRICS.each do |metric|
             entries = grouped_prs.map do |date, prs|
               PrTrendReportEntry.new(date, prs.map(&metric))
@@ -24,6 +23,10 @@ module Mergometer
       end
 
       private
+
+        def csv_headers
+          [nil] + grouped_prs.keys.map(&:to_date)
+        end
 
         def fields_to_preload
           METRICS
