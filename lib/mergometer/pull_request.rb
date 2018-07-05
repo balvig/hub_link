@@ -20,7 +20,6 @@ module Mergometer
     end
 
     # Metrics
-
     def additions
       extended_data.additions
     end
@@ -57,22 +56,10 @@ module Mergometer
 
     private
 
-      def open?
-        state == "open"
-      end
-
-      def wip?
-        title.include?("[WIP]")
-      end
-
       def fetch_reviews
         Octokit.pull_request_reviews(repo, number).map do |data|
           Review.new(data)
         end.reject(&:invalid?)
-      end
-
-      def changes
-        @_changes ||= extended_data.additions + extended_data.deletions
       end
 
       def first_approval
