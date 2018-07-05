@@ -1,21 +1,18 @@
 require "csv"
 require "mergometer/report"
-require "mergometer/reports/pr_trend_report_entry"
 
 module Mergometer
   module Reports
     class PrTrendReport < Report
       METRICS = %i(approval_time time_to_first_review merge_time body_size additions)
-      GROUPING = :week
+      GITHUB_API_CHUNK = 14
 
       def render
-        CSV.open("pr_trend_report.csv", "w", headers: csv_headers) do |csv|
-          METRICS.each do |metric|
-            entries = grouped_prs.map do |date, prs|
-              PrTrendReportEntry.new(date, prs.map(&metric))
+        CSV.open("pr_trend_report.csv", "w", write_headers: true, headers: csv_headers) do |csv|
+          eligible_prs.each do |pr|
+            csv << [pr.created_at] + METRICS.map do |metric|
+              pr.public_send(metric)
             end
-
-            csv << [metric.to_s] + entries.map(&:value)
           end
         end
 
@@ -25,15 +22,11 @@ module Mergometer
       private
 
         def csv_headers
-          [nil] + grouped_prs.keys.map(&:to_date)
+          ["Date"] + METRICS
         end
 
         def fields_to_preload
           METRICS
-        end
-
-        def grouped_prs
-          @_grouped_prs ||= eligible_prs.sort_by(&GROUPING).group_by(&GROUPING)
         end
 
         def eligible_prs
@@ -45,10 +38,17 @@ module Mergometer
         end
 
         def filter
-          [
-            "#{repo_query} type:pr created:#{52.weeks.ago.to_date}..#{26.weeks.ago.to_date}",
-            "#{repo_query} type:pr created:#{26.weeks.ago.to_date}..#{1.week.ago.to_date}"
-          ]
+          start_date.step(end_date, GITHUB_API_CHUNK).map do |date|
+            "#{repo_query} type:pr created:#{date}..#{date + GITHUB_API_CHUNK}"
+          end
+        end
+
+        def start_date
+          52.weeks.ago.to_date
+        end
+
+        def end_date
+          1.week.ago.to_date
         end
     end
   end
