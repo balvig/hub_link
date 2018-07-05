@@ -3,10 +3,6 @@ require "mergometer/review"
 
 module Mergometer
   class PullRequest
-    QUICK_FIX_CUTOFF = 6 # Changes
-    LONG_RUNNING_LENGTH = 5 * 24 # Days
-    HEAVILY_COMMENTED_COUNT = 20 # Comments
-
     def self.search(filter)
       Octokit.search_issues(filter).items.map { |item| new(item) }
     end
@@ -43,26 +39,6 @@ module Mergometer
 
     def body_size
       data.body.to_s.size
-    end
-
-    def problematic?
-      heavily_commented?
-    end
-
-    def quick_fix?
-      changes < QUICK_FIX_CUTOFF
-    end
-
-    def long_running?
-      merge_time > LONG_RUNNING_LENGTH
-    end
-
-    def heavily_commented?
-      comment_count > HEAVILY_COMMENTED_COUNT
-    end
-
-    def comment_count
-      @_comment_count ||= data.comments + comment_data.size
     end
 
     def merge_time
