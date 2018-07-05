@@ -1,4 +1,5 @@
 require "mergometer/core_ext/float"
+require "mergometer/review"
 
 module Mergometer
   class PullRequest
@@ -107,9 +108,9 @@ module Mergometer
       end
 
       def fetch_reviews
-        Octokit.pull_request_reviews(repo, number).reject do |review|
-          review.user.login == "houndci-bot" || review.state == "COMMENTED"
-        end
+        Octokit.pull_request_reviews(repo, number).map do |data|
+          Review.new(data)
+        end.reject(&:invalid?)
       end
 
       def changes
@@ -117,7 +118,7 @@ module Mergometer
       end
 
       def first_approval
-        reviews.find { |r| r.state == "APPROVED" }
+        reviews.find(&:approval?)
       end
 
       def first_review

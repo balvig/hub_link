@@ -5,7 +5,7 @@ module Mergometer
   module Reports
     class ReviewReport < Report
       def render
-        puts "Reviews last week: #{range}"
+        puts "Reviews last week of #{week}"
         super
       end
 
@@ -25,14 +25,14 @@ module Mergometer
         end
 
         def entries
-          Aggregate.new(countables: filtered_reviews, users: reviewers_in_prs).run do |review, user|
+          Aggregate.new(countables: filtered_reviews, users: all_reviewers).run do |review, user|
             review.user.login == user
           end
         end
 
         def filtered_reviews
           reviews_in_prs.find_all do |review|
-            range.cover?(review.submitted_at)
+            review.week == week
           end
         end
 
@@ -40,15 +40,11 @@ module Mergometer
           @_reviews_in_prs ||= prs.flat_map(&:reviews)
         end
 
-        def range
-          week.beginning_of_week...week.end_of_week
-        end
-
         def week
           Date.today.last_week
         end
 
-        def reviewers_in_prs
+        def all_reviewers
           filtered_reviews.flat_map(&:user).map(&:login).uniq
         end
     end
