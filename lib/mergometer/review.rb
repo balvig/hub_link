@@ -1,9 +1,5 @@
 module Mergometer
   class Review < SimpleDelegator
-    def week
-      submitted_at.beginning_of_week
-    end
-
     def approval?
       state == "APPROVED"
     end

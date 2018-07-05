@@ -19,14 +19,16 @@ module Mergometer
       attr_accessor :repo
 
       def render
+        render_table
+      end
+
+      def render_table
         puts Hirb::Helpers::AutoTable.render(
           sorted_entries,
           unicode: true,
           fields: fields,
           description: false
         )
-
-        puts "Total number of PRs checked: #{prs.size} (#{filter})"
       end
 
       def fields
@@ -65,6 +67,7 @@ module Mergometer
 
       def fetch_prs
         Array(filter).flat_map do |filter|
+          puts "Retrieving: #{filter}"
           PullRequest.search(filter)
         end
       end
