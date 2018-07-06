@@ -11,7 +11,7 @@ module Mergometer
     private
 
       def bot?
-        user.login == "houndci-bot"
+        %w(houndci-bot cookpad-devel).include?(user.login)
       end
 
       def driveby?
