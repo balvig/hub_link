@@ -31,7 +31,7 @@ module Mergometer
       end
 
       def logger
-        logger = Logger.new("tmp/github.log")
+        logger = Logger.new(STDOUT)
         logger.level = Logger::INFO
         logger
       end

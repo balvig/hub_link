@@ -32,7 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "faraday_middleware"
   spec.add_dependency "faraday-detailed_logger"
   spec.add_dependency "octokit"
-  spec.add_dependency "progress_bar"
 
   spec.add_development_dependency "bundler", "~> 1.12"
   spec.add_development_dependency "rake", "~> 10.0"

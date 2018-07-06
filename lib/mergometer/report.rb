@@ -1,5 +1,4 @@
 require "csv"
-require "progress_bar"
 require "mergometer/pull_request"
 
 module Mergometer
@@ -20,10 +19,6 @@ module Mergometer
 
       attr_accessor :repo, :query, :columns, :source
 
-      def progress_bar
-        @_progress_bar ||= ProgressBar.new(source.size, :bar, :counter, :elapsed)
-      end
-
       def export_csv
         CSV.open(csv_file_name, "w", write_headers: true, headers: columns) do |csv|
           csv_data.each do |data|
@@ -38,8 +33,6 @@ module Mergometer
 
       def csv_data
         source.map do |record|
-          progress_bar.increment!
-
           columns.map do |column|
             record.public_send(column)
           end
@@ -52,9 +45,7 @@ module Mergometer
 
       def fetch_prs
         Array(query).flat_map do |query|
-          query_with_repo = "#{query} #{repo_query}"
-          puts "Retrieving: #{query_with_repo}"
-          PullRequest.search(query_with_repo)
+          PullRequest.search "#{query} #{repo_query}"
         end
       end
 
