@@ -4,7 +4,7 @@ require "mergometer/report"
 module Mergometer
   module Reports
     class PrTrendReport < Report
-      METRICS = %i(approval_time time_to_first_review merge_time body_size additions)
+      METRICS = %i(approval_time time_to_first_review merge_time body_size additions review_count)
       GITHUB_API_CHUNK = 14
 
       def render

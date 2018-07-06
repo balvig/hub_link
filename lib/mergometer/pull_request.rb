@@ -54,6 +54,10 @@ module Mergometer
       (first_approval.submitted_at - created_at).in_hours
     end
 
+    def review_count
+      reviews.size
+    end
+
     private
 
       def fetch_reviews
