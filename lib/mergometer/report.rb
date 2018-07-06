@@ -1,64 +1,49 @@
+require "csv"
 require "progress_bar"
 require "mergometer/pull_request"
 
 module Mergometer
   class Report
-    require "hirb"
-
-    def initialize(repo)
+    def initialize(repo:, query:, columns:, &block)
       @repo = repo
+      @query = query
+      @columns = columns
+      @source = yield(prs)
     end
 
     def run
-      preload
-      render
+      export_csv
+      puts "#{csv_file_name} exported."
     end
 
     private
 
-      attr_accessor :repo
+      attr_accessor :repo, :query, :columns, :source
 
-      def render
-        render_table
+      def progress_bar
+        @_progress_bar ||= ProgressBar.new(source.size, :bar, :counter, :elapsed)
       end
 
-      def render_table
-        puts Hirb::Helpers::AutoTable.render(
-          sorted_entries,
-          unicode: true,
-          fields: fields,
-          description: false
-        )
+      def export_csv
+        CSV.open(csv_file_name, "w", write_headers: true, headers: columns) do |csv|
+          csv_data.each do |data|
+            csv << data
+          end
+        end
       end
 
-      def fields
-        raise "Implement fields method"
+      def csv_file_name
+        self.class.to_s.demodulize.underscore + ".csv"
       end
 
-      def sort_field
-        fields.last
-      end
+      def csv_data
+        source.map do |record|
+          progress_bar.increment!
 
-      def sorted_entries
-        entries.sort_by(&sort_field).reverse
-      end
-
-      def entries
-        prs
-      end
-
-      def filter
-        "base:master #{repo_query} type:pr is:merged"
-      end
-
-      def fields_to_preload
-        []
-      end
-
-      def repo_query
-        @_repo_query = repo.split(",").map do |r|
-          "repo:#{r}"
-        end.join(" ")
+          columns.map do |column|
+            record.public_send(column)
+          end
+        end
       end
 
       def prs
@@ -66,23 +51,17 @@ module Mergometer
       end
 
       def fetch_prs
-        Array(filter).flat_map do |filter|
-          puts "Retrieving: #{filter}"
-          PullRequest.search(filter)
+        Array(query).flat_map do |query|
+          query_with_repo = "#{query} #{repo_query}"
+          puts "Retrieving: #{query_with_repo}"
+          PullRequest.search(query_with_repo)
         end
       end
 
-      def preload
-        prs.each do |pr|
-          fields_to_preload.each do |field|
-            pr.send(field)
-          end
-          progress_bar.increment!
-        end
-      end
-
-      def progress_bar
-        @_progress_bar ||= ProgressBar.new(prs.size, :bar, :counter, :elapsed)
+      def repo_query
+        @_repo_query = repo.split(",").map do |r|
+          "repo:#{r}"
+        end.join(" ")
       end
   end
 end

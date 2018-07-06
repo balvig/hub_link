@@ -1,14 +1,19 @@
+require "csv"
 require "mergometer/report"
 
 module Mergometer
   module Reports
-    class ReviewReport < Report
-      COLUMNS = %i(submitted_at submitter)
+    class PrReport < Report
+      COLUMNS = %i(created_at approval_time time_to_first_review merge_time body_size additions review_count submitter)
       GITHUB_API_CHUNK = 14
 
       def initialize(repo)
         super repo: repo, query: prs_past_year, columns: COLUMNS do |prs|
-          prs.flat_map(&:reviews)
+          prs.reject do |pr|
+            COLUMNS.any? do |metric|
+              pr.public_send(metric).blank?
+            end
+          end
         end
       end
 
@@ -21,7 +26,7 @@ module Mergometer
         end
 
         def start_date
-          4.weeks.ago.to_date
+          52.weeks.ago.to_date
         end
 
         def end_date

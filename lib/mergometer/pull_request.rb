@@ -7,8 +7,8 @@ module Mergometer
       Octokit.search_issues(filter).items.map { |item| new(item) }
     end
 
-    def user
-      super.login
+    def submitter
+      user.login
     end
 
     def week

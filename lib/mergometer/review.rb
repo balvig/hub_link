@@ -1,5 +1,9 @@
 module Mergometer
   class Review < SimpleDelegator
+    def submitter
+      user.login
+    end
+
     def approval?
       state == "APPROVED"
     end
