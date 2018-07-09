@@ -1,13 +1,10 @@
 require "csv"
-require "mergometer/pull_request"
 
 module Mergometer
   class Report
-    def initialize(repo:, query:, columns:, &block)
-      @repo = repo
-      @query = query
+    def initialize(columns:, source:)
       @columns = columns
-      @source = yield(prs)
+      @source = source
     end
 
     def run
@@ -17,7 +14,7 @@ module Mergometer
 
     private
 
-      attr_accessor :repo, :query, :columns, :source
+      attr_accessor :columns, :source
 
       def export_csv
         CSV.open(csv_file_name, "w", write_headers: true, headers: columns) do |csv|
@@ -37,22 +34,6 @@ module Mergometer
             record.public_send(column)
           end
         end
-      end
-
-      def prs
-        @_prs ||= fetch_prs
-      end
-
-      def fetch_prs
-        Array(query).flat_map do |query|
-          PullRequest.search "#{query} #{repo_query}"
-        end
-      end
-
-      def repo_query
-        @_repo_query = repo.split(",").map do |r|
-          "repo:#{r}"
-        end.join(" ")
       end
   end
 end

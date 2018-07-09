@@ -1,8 +1,8 @@
-require "mergometer/report"
+require "mergometer/github_report"
 
 module Mergometer
   module Reports
-    class ReviewReport < Report
+    class ReviewReport < GithubReport
       COLUMNS = %i(submitted_at submitter)
       GITHUB_API_CHUNK = 14
 
