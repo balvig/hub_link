@@ -30,7 +30,7 @@ module Mergometer
         end
 
         def end_date
-          1.week.ago.to_date
+          Date.today
         end
     end
   end

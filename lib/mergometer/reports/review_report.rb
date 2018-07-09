@@ -21,11 +21,11 @@ module Mergometer
         end
 
         def start_date
-          4.weeks.ago.to_date
+          52.weeks.ago.to_date
         end
 
         def end_date
-          1.week.ago.to_date
+          Date.today
         end
     end
   end
