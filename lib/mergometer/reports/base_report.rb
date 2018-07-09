@@ -1,0 +1,192 @@
+require "csv"
+require "hirb"
+require "progress_bar"
+
+module Mergometer
+  module Reports
+    class BaseReport
+      def initialize(repos, **options)
+        @repos = repos
+        default_options.each do |k, v|
+          instance_variable_set("@#{k}", options[k] || v)
+        end
+        load_reviews if load_reviews?
+      end
+
+      def save_to_csv
+        CSV.open("#{@name}.csv", "w") do |csv|
+          csv << table_entries.first.keys if table_entries&.first&.keys
+          table_entries.each do |hash|
+            csv << hash.values
+          end
+        end
+
+        puts "#{@name} CSV exported."
+      end
+
+      def print
+        puts @name
+        puts "Total PRs: #{prs.size}"
+        puts Hirb::Helpers::AutoTable.render(
+          table_entries,
+          unicode: true,
+          fields: table_fields,
+          resize: false,
+          description: false
+        )
+      end
+
+      def to_h
+        table_entries
+      end
+
+      private
+
+        attr_reader :repos, :from, :to
+
+        def default_options
+          {
+            name: default_name,
+            group_by: "week",
+            graph_type: "Line",
+            from: Date.today.last_week.beginning_of_week.strftime("%F"),
+            to: Date.today.last_week.end_of_week.strftime("%F")
+          }
+        end
+
+        def load_reviews?
+          false
+        end
+
+        def table_fields
+          @table_fields = [first_column_name] + table_keys
+          @table_fields.push("Total") if show_total?
+          @table_fields.push("Average") if show_average?
+          @table_fields
+        end
+
+        def default_name
+          self.class.name.demodulize
+        end
+
+        def table_entries
+          @table_entries ||= data_sets.map do |key, entries|
+            new_entry = ([first_column_name => key] + entries.each_with_index.map do |v, i|
+              { table_keys[i] => v }
+            end)
+            new_entry.push("Total" => sum[key]) if show_total?
+            new_entry.push("Average" => average[key]) if show_average?
+            new_entry.reduce({}, :merge)
+          end
+          if show_average?
+            @table_entries.sort_by { |h| h["Average"] }.reverse
+          else
+            @table_entries
+          end
+        end
+
+        def grouped_prs_by_time_and_user
+          @grouped_prs_by_time_and_user ||= grouped_prs_by_time.inject({}) do |result, (time, prs)|
+            result[time] = Reports::Aggregate.new(countables: prs, users: users).run do |pr, user|
+              pr.user == user
+            end
+            result
+          end
+        end
+
+        def grouped_prs_by_time_and_reviewer
+          @grouped_prs_by_time_and_reviewer ||= grouped_prs_by_time.inject({}) do |result, (time, prs)|
+            result[time] = Reports::Aggregate.new(countables: prs, users: reviewers).run do |pr, reviewer|
+              pr.reviewers.include?(reviewer)
+            end
+            result
+          end
+        end
+
+        def grouped_prs_by_time
+          @grouped_prs_by ||= prs.sort_by(&group_by.to_sym).group_by(&group_by.to_sym)
+        end
+
+        def grouped_prs_by_user
+          @grouped_prs_by_user ||= prs.group_by(&:user)
+        end
+
+        def grouped_prs_by_reviewer
+          @grouped_prs_by_reviewer ||= Reports::Aggregate.new(countables: prs, users: reviewers).run do |pr, reviewer|
+            pr.reviewers.include?(reviewer)
+          end
+        end
+
+        def users
+          @users ||= prs.group_by(&:user).keys
+        end
+
+        def reviewers
+          @reviewers ||= prs.flat_map(&:reviewers).uniq
+        end
+
+        def show_total?
+          true
+        end
+
+        def show_average?
+          true
+        end
+
+        def average
+          @average ||= data_sets.map do |k, v|
+            [k, Math.mean(v).round(2)]
+          end.to_h
+        end
+
+        def sum
+          @sum ||= data_sets.map do |k, v|
+            [k, v.reduce(:+).round(2)]
+          end.to_h
+        end
+
+        def load_reviews
+          puts "Loading PR reviews"
+          prs.each do |pr|
+            pr.review_required?
+            progress_bar.increment!
+          end
+          progress_bar.increment! prs.size
+        end
+
+        def progress_bar
+          @progress_bar ||= ProgressBar.new(prs.size, :elapsed, :bar, :counter, :rate)
+        end
+
+        def group_by
+          @group_by
+        end
+
+        def first_column_name
+          raise NotImplementedError
+        end
+
+        def table_keys
+          raise NotImplementedError
+        end
+
+        def data_sets
+          raise NotImplementedError
+        end
+
+        def prs
+          raise NotImplementedError
+        end
+
+        def created_prs
+          @created_prs ||= PullRequest.search("repo:#{repos} type:pr created:#{from}..#{to}")
+          # @created_prs ||= PullRequests.search(repos, created_at: { from: from, to: to })
+        end
+
+        def updated_prs
+          @updated_prs ||= PullRequest.search("repo:#{repos} type:pr updated:#{from}..#{to}")
+          # @updated_prs ||= PullRequests.search(repos, updated_at: { from: from, to: to })
+        end
+    end
+  end
+end
