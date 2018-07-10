@@ -1,5 +1,6 @@
 require "mergometer/core_ext/float"
 require "mergometer/review"
+require "mergometer/review_request"
 
 module Mergometer
   class PullRequest < SimpleDelegator
@@ -11,20 +12,16 @@ module Mergometer
       user.login
     end
 
-    def week
-      created_at.beginning_of_week
-    end
-
-    def month
-      created_at.beginning_of_month
-    end
-
     def reviewers
       @_reviewers ||= reviews.map(&:user).map(&:login).uniq
     end
 
     def reviews
       @_reviews ||= fetch_reviews
+    end
+
+    def review_requests
+      @_review_requests ||= fetch_review_requests
     end
 
     # Metrics
@@ -37,7 +34,7 @@ module Mergometer
     end
 
     def merge_time
-      return if closed_at.blank?
+      return unless merged?
 
       (closed_at - created_at).in_hours
     end
@@ -59,6 +56,18 @@ module Mergometer
     end
 
     private
+
+      def merged?
+        closed_at.present?
+      end
+
+      def fetch_review_requests
+        requests = Octokit.pull_request_review_requests(repo, number)
+
+        requests.users.compact.map do |user|
+          ReviewRequest.new(created_at: created_at, user: user)
+        end
+      end
 
       def fetch_reviews
         Octokit.pull_request_reviews(repo, number).map do |data|

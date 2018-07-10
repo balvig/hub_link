@@ -1,5 +1,7 @@
 module Mergometer
   class Review < SimpleDelegator
+    BOTS = %w(houndci-bot cookpad-devel)
+
     def submitter
       user.login
     end
@@ -15,7 +17,7 @@ module Mergometer
     private
 
       def bot?
-        %w(houndci-bot cookpad-devel).include?(user.login)
+        BOTS.include?(user.login)
       end
 
       def driveby?
