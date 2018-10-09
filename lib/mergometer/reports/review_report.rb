@@ -3,7 +3,7 @@ require "mergometer/github_report"
 module Mergometer
   module Reports
     class ReviewReport < GithubReport
-      COLUMNS = %i(submitted_at submitter)
+      COLUMNS = %i(submitted_at submitter approval?)
       GITHUB_API_CHUNK = 14
 
       def initialize(repo)
@@ -21,7 +21,7 @@ module Mergometer
         end
 
         def start_date
-          52.weeks.ago.to_date
+          64.weeks.ago.to_date
         end
 
         def end_date

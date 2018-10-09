@@ -51,6 +51,10 @@ module Mergometer
       (first_approval.submitted_at - created_at).in_hours
     end
 
+    def straight_approval?
+      reviews.all?(&:approval?)
+    end
+
     def review_count
       reviews.size
     end
