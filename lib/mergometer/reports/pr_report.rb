@@ -4,7 +4,7 @@ require "mergometer/github_report"
 module Mergometer
   module Reports
     class PrReport < GithubReport
-      COLUMNS = %i(id created_at approval_time time_to_first_review merge_time body_size additions review_count submitter straight_approval?)
+      COLUMNS = %i(id number created_at approval_time time_to_first_review merge_time body_size additions review_count submitter straight_approval?)
       GITHUB_API_CHUNK = 14
 
       def initialize(repo)
