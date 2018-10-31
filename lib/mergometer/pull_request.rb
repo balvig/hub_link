@@ -76,6 +76,7 @@ module Mergometer
       def fetch_reviews
         Octokit.pull_request_reviews(repo, number).map do |data|
           data.pull_request_id = id
+          data.number = number
           Review.new(data)
         end.reject(&:invalid?)
       end
