@@ -3,7 +3,7 @@ require "mergometer/github_report"
 module Mergometer
   module Reports
     class ReviewRequestReport < GithubReport
-      COLUMNS = %i(created_at reviewer)
+      COLUMNS = %i(id created_at reviewer)
       GITHUB_API_CHUNK = 14
 
       def initialize(repo)
