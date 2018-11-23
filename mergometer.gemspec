@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "activesupport"
+  spec.add_dependency "dotenv"
   spec.add_dependency "facets"
   spec.add_dependency "faraday_middleware"
   spec.add_dependency "faraday-detailed_logger"
