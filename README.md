@@ -1,6 +1,6 @@
 # Mergometer
 
-Tech OKR Metrics from GitHub
+Developer Metrics from GitHub
 
 ## Usage
 
@@ -13,17 +13,15 @@ You can either:
 git clone https://github.com/balvig/mergometer.git
 cd mergometer
 bundle
-OCTOKIT_ACCESS_TOKEN=<token> bundle exec exe/mergometer <report_name> <github_organization/repo_name>
+OCTOKIT_ACCESS_TOKEN=<token> bundle exec exe/mergometer <github_organization/repo_name>
 ```
 
 ### Installing this gem
 _This will work only after the gem gets published to RubyGems._
 ```
 gem install mergometer
-OCTOKIT_ACCESS_TOKEN=<token> mergometer <report_name> <github_organization/repo_name>
+OCTOKIT_ACCESS_TOKEN=<token> mergometer <github_organization/repo_name>
 ```
-
-For currently supported reports, run `mergometer` with no arguments.
 
 ## Contributing
 

@@ -1,9 +1,9 @@
+require "faraday/detailed_logger"
+require "faraday_middleware"
+require "active_support"
+
 module Mergometer
   class Configuration
-    require "faraday/detailed_logger"
-    require "faraday_middleware"
-    require "active_support"
-
     def initialize(cache_time: 3600)
       @cache_time = cache_time
     end
