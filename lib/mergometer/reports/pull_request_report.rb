@@ -15,16 +15,12 @@ module Mergometer
         review_count
         submitter
         straight_approval?
+        repo
       )
 
       def initialize(prs)
         super records: prs, columns: COLUMNS
       end
-          #prs.reject do |pr|
-            #COLUMNS.any? do |metric|
-              #pr.public_send(metric).nil?
-            #end
-          #end
     end
   end
 end

@@ -56,6 +56,10 @@ module Mergometer
         reviews.size
       end
 
+      def repo
+        extended_data.base.repo.full_name
+      end
+
       private
 
         def merged?
@@ -88,10 +92,6 @@ module Mergometer
 
         def extended_data
           @_extended_data ||= Octokit.get(pull_request.url)
-        end
-
-        def repo
-          extended_data.base.repo.full_name
         end
     end
   end
