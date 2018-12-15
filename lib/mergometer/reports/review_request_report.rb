@@ -4,6 +4,7 @@ module Mergometer
   module Reports
     class ReviewRequestReport < CsvReport
       COLUMNS = %i(
+        id
         created_at
         reviewer
       )

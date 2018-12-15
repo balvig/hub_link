@@ -70,7 +70,7 @@ module Mergometer
           requests = Octokit.pull_request_review_requests(repo, number)
 
           requests.users.compact.map do |user|
-            ReviewRequest.new(created_at: created_at, user: user)
+            ReviewRequest.new(id: id, created_at: created_at, user: user)
           end
         end
 
