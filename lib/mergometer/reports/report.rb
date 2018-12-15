@@ -2,7 +2,7 @@ require "csv"
 
 module Mergometer
   module Reports
-    class CsvReport
+    class Report
       def initialize(records:, columns:)
         @records = records
         @columns = columns
@@ -10,6 +10,14 @@ module Mergometer
 
       def save
         export_csv
+      end
+
+      def to_rows
+        records.map do |record|
+          columns.inject({}) do |result, column|
+            result.merge(column => record.public_send(column))
+          end
+        end
       end
 
       private

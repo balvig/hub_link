@@ -1,8 +1,8 @@
-require "mergometer/reports/csv_report"
+require "mergometer/reports/report"
 
 module Mergometer
   module Reports
-    class ReviewRequestReport < CsvReport
+    class ReviewRequestReport < Report
       COLUMNS = %i(
         id
         created_at

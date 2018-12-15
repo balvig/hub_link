@@ -8,14 +8,26 @@ module Mergometer
     GITHUB_API_CHUNK = 14
 
     def initialize(repos, start_date: 64.weeks.ago)
-      @repos = repos
+      @repos = repos.split(",")
       @start_date = start_date.to_date
     end
 
     def run
-      Reports::PullRequestReport.new(prs).save
-      Reports::ReviewReport.new(prs).save
-      Reports::ReviewRequestReport.new(prs).save
+      pull_request_report.save
+      review_report.save
+      review_request_report.save
+    end
+
+    def pull_request_report
+      Reports::PullRequestReport.new(prs)
+    end
+
+    def review_report
+      Reports::ReviewReport.new(prs)
+    end
+
+    def review_request_report
+      Reports::ReviewRequestReport.new(prs)
     end
 
     private
@@ -47,7 +59,7 @@ module Mergometer
       end
 
       def build_repo_query
-        repos.split(",").map do |r|
+        repos.map do |r|
           "repo:#{r}"
         end.join(" ")
       end
