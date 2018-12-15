@@ -7,8 +7,9 @@ module Mergometer
   class ReportsGenerator
     GITHUB_API_CHUNK = 14
 
-    def initialize(repos)
+    def initialize(repos, start_date: 64.weeks.ago)
       @repos = repos
+      @start_date = start_date.to_date
     end
 
     def run
@@ -19,7 +20,7 @@ module Mergometer
 
     private
 
-      attr_accessor :repos
+      attr_accessor :repos, :start_date
 
       def prs
         @_prs ||= fetch_prs
@@ -37,12 +38,8 @@ module Mergometer
         end
       end
 
-      def start_date
-        64.weeks.ago.to_date
-      end
-
       def end_date
-        Date.today
+        Date.tomorrow
       end
 
       def repo_query
