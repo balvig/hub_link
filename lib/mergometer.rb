@@ -1,4 +1,3 @@
-require "dotenv/load"
 require "mergometer/configuration"
 require "mergometer/reports_generator"
 require "mergometer/version"

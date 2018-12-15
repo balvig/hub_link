@@ -60,6 +60,10 @@ module Mergometer
         extended_data.base.repo.full_name
       end
 
+      def labels
+        @_labels ||= Octokit.labels_for_issue(repo, number).map(&:name).join(", ")
+      end
+
       private
 
         def merged?

@@ -7,6 +7,7 @@ module Mergometer
         id
         number
         created_at
+        closed_at
         approval_time
         time_to_first_review
         merge_time
@@ -15,6 +16,7 @@ module Mergometer
         review_count
         submitter
         straight_approval?
+        labels
         repo
       )
 
