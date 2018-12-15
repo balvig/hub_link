@@ -13,9 +13,9 @@ module Mergometer
     end
 
     def run
-      pull_request_report.save
-      review_report.save
-      review_request_report.save
+      pull_request_report.export_csv
+      review_report.export_csv
+      review_request_report.export_csv
     end
 
     def pull_request_report
