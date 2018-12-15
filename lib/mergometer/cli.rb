@@ -1,7 +1,3 @@
-require "mergometer"
-require "mergometer/configuration"
-require "mergometer/reports_generator"
-
 module Mergometer
   class Cli
     def self.run(*args)
@@ -13,17 +9,12 @@ module Mergometer
     end
 
     def run
-      apply_configuration
       generate_reports
     end
 
     private
 
       attr_reader :argv
-
-      def apply_configuration
-        Configuration.new(cache_time: 72 * 3600).apply
-      end
 
       def generate_reports
         ReportsGenerator.new(repo_names).run
