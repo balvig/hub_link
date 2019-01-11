@@ -16,9 +16,9 @@ Then you can do:
 ```ruby
 REPOS = "balvig/hub_link,balvig/hub_store"
 
-link = HubLink::Link.new(REPOS, start_date: 3.months.ago)
+stream = HubLink::Stream.new(REPOS, start_date: 3.months.ago)
 
-link.in_batches do |batch|
+stream.in_batches do |batch|
   batch.prs # => [{ id: 34, merge_time: 6400, ... }]
   batch.reviews # => [{ id: 54, reviewer: "balvig", approval: true, ... }]
   batch.review_requests # => [{ id: 74, reviewer: "balvig", ... }]
