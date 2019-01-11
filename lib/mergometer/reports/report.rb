@@ -1,35 +1,30 @@
 require "csv"
+require "mergometer/slicer"
 
 module Mergometer
   module Reports
     class Report
-      def initialize(records:, columns:)
-        @records = records
+      def initialize(queries:, columns:)
+        @queries = queries
         @columns = columns
       end
 
-      def export_csv
-        CSV.open(csv_file_name, "w", write_headers: true, headers: columns) do |csv|
-          rows.each do |row|
-            csv << row.values
+      def in_batches(&block)
+        queries.each do |query|
+          results = fetch_results(query).map do |record|
+            Slicer.new(record, columns: columns).to_h
           end
-        end
-      end
 
-      def rows
-        records.map do |record|
-          columns.inject({}) do |result, column|
-            result.merge(column => record.public_send(column))
-          end
+          yield results
         end
       end
 
       private
 
-        attr_accessor :records, :columns
+        attr_reader :queries, :columns
 
-        def csv_file_name
-          self.class.to_s.demodulize.underscore + ".csv"
+        def fetch_results(query)
+          Api::PullRequest.search(query)
         end
     end
   end

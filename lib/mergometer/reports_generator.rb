@@ -19,34 +19,24 @@ module Mergometer
     end
 
     def pull_request_report
-      Reports::PullRequestReport.new(prs)
+      Reports::PullRequestReport.new(queries)
     end
 
     def review_report
-      Reports::ReviewReport.new(prs)
+      Reports::ReviewReport.new(queries)
     end
 
     def review_request_report
-      Reports::ReviewRequestReport.new(prs)
+      Reports::ReviewRequestReport.new(queries)
     end
 
     private
 
       attr_accessor :repos, :start_date
 
-      def prs
-        @_prs ||= fetch_prs
-      end
-
-      def fetch_prs
-        queries.flat_map do |query|
-          Api::PullRequest.search "#{query} #{repo_query}"
-        end
-      end
-
       def queries
         start_date.step(end_date, GITHUB_API_CHUNK).map do |date|
-          "type:pr created:#{date}..#{date + GITHUB_API_CHUNK}"
+          "type:pr created:#{date}..#{date + GITHUB_API_CHUNK} #{repo_query}"
         end
       end
 

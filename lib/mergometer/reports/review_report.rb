@@ -11,9 +11,15 @@ module Mergometer
         approval?
       )
 
-      def initialize(prs)
-        super records: prs.flat_map(&:reviews), columns: COLUMNS
+      def initialize(queries)
+        super queries: queries, columns: COLUMNS
       end
+
+      private
+
+        def fetch_results(query)
+          super.flat_map(&:reviews)
+        end
     end
   end
 end

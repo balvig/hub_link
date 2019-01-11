@@ -20,8 +20,8 @@ module Mergometer
         repo
       )
 
-      def initialize(prs)
-        super records: prs, columns: COLUMNS
+      def initialize(queries)
+        super queries: queries, columns: COLUMNS
       end
     end
   end
