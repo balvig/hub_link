@@ -1,4 +1,4 @@
-module Mergometer
+module HubLink
   class Batch
     def initialize(query)
       @query = query

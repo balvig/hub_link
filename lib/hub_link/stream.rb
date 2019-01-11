@@ -1,7 +1,7 @@
-require "mergometer/api/pull_request"
-require "mergometer/batch"
+require "hub_link/api/pull_request"
+require "hub_link/batch"
 
-module Mergometer
+module HubLink
   class Stream
     GITHUB_BATCH_SIZE = 14
 

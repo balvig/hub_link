@@ -1,10 +1,10 @@
 require "octokit"
-require "mergometer/core_ext/float"
-require "mergometer/api/review"
-require "mergometer/api/review_request"
-require "mergometer/slicer"
+require "hub_link/core_ext/float"
+require "hub_link/api/review"
+require "hub_link/api/review_request"
+require "hub_link/slicer"
 
-module Mergometer
+module HubLink
   module Api
     class PullRequest < SimpleDelegator
       def self.search(filter)

@@ -1,7 +1,7 @@
 # Hub Link
 
 When you just want the loop through all the raw pull request and review data from GitHub
-(for exporting metrics f.ex)
+(for exporting metrics f.ex).
 
 ## Usage
 
@@ -29,7 +29,7 @@ Hub Link will loop through the API in batches of 2 weeks at a time.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/mergometer. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/balvig/hub_link. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 ## License

@@ -1,4 +1,4 @@
-module Mergometer
+module HubLink
   class Slicer
     def initialize(record, columns: [])
       @record = record
