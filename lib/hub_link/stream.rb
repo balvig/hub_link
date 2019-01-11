@@ -5,7 +5,7 @@ module HubLink
   class Stream
     GITHUB_BATCH_SIZE = 14
 
-    def initialize(repos, start_date: 64.weeks.ago)
+    def initialize(repos, start_date: 2.years.ago)
       @repos = repos.split(",")
       @start_date = start_date.to_date
     end
@@ -22,7 +22,7 @@ module HubLink
 
       def queries
         start_date.step(end_date, GITHUB_BATCH_SIZE).map do |date|
-          "type:pr created:#{date}..#{date + GITHUB_BATCH_SIZE} #{repo_query}"
+          "type:pr updated:#{date}..#{date + GITHUB_BATCH_SIZE} #{repo_query}"
         end
       end
 
