@@ -1,26 +1,27 @@
-# Mergometer
+# Hub Link
 
-Developer Metrics from GitHub
+When you just want the raw pull request and review data from GitHub (for
+metrics etc)
 
 ## Usage
 
-You can either:
-- Clone this repository.
-- Install the gem.
+Add this line to your application's Gemfile:
 
-### Cloning this repository
-```
-git clone https://github.com/balvig/mergometer.git
-cd mergometer
-bundle
-OCTOKIT_ACCESS_TOKEN=<token> bundle exec exe/mergometer <github_organization/repo_name>
+ ```ruby
+ gem "hub_store"
 ```
 
-### Installing this gem
-_This will work only after the gem gets published to RubyGems._
-```
-gem install mergometer
-OCTOKIT_ACCESS_TOKEN=<token> mergometer <github_organization/repo_name>
+And then you can do:
+
+```ruby
+repos = "balvig/hub_link,balvig/hub_store"
+link = HubLink::Link.new(repos, start_date: 3.months.ago)
+
+link.in_batches do |batch|
+  batch.prs # =>
+  batch.reviews # =>
+  batch.review_requests # =>
+end
 ```
 
 ## Contributing

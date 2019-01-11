@@ -12,6 +12,10 @@ module Mergometer
       def reviewer
         user.login
       end
+
+      def to_h
+        Slicer.new(self, columns: %i(id created_at reviewer)).to_h
+      end
     end
   end
 end

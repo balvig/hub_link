@@ -15,6 +15,10 @@ module Mergometer
         bot? || driveby? || draft?
       end
 
+      def to_h
+        Slicer.new(self, columns: %i(id pull_request_id submitted_at reviewer approval?)).to_h
+      end
+
       private
 
         def bot?
