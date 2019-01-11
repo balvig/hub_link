@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'hub_link/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "Hub Link"
+  spec.name          = "hub_link"
   spec.version       = HubLink::VERSION
   spec.authors       = ["Jens Balvig"]
   spec.email         = ["jens@balvig.com"]
