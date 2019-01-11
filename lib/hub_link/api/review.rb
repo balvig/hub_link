@@ -1,4 +1,4 @@
-module Mergometer
+module HubLink
   module Api
     class Review < SimpleDelegator
       BOTS = %w(houndci-bot cookpad-devel)

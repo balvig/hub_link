@@ -1,4 +1,4 @@
-module Mergometer
+module HubLink
   module Api
     class ReviewRequest
       attr_reader :created_at, :user, :id
