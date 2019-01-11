@@ -1,7 +1,7 @@
 # Hub Link
 
-When you just want the raw pull request and review data from GitHub (for
-metrics etc)
+When you just want the loop through all the raw pull request and review data from GitHub
+(for exporting metrics f.ex)
 
 ## Usage
 
@@ -11,18 +11,21 @@ Add this line to your application's Gemfile:
  gem "hub_store"
 ```
 
-And then you can do:
+Then you can do:
 
 ```ruby
-repos = "balvig/hub_link,balvig/hub_store"
-link = HubLink::Link.new(repos, start_date: 3.months.ago)
+REPOS = "balvig/hub_link,balvig/hub_store"
+
+link = HubLink::Link.new(REPOS, start_date: 3.months.ago)
 
 link.in_batches do |batch|
-  batch.prs # =>
-  batch.reviews # =>
-  batch.review_requests # =>
+  batch.prs # => [{ id: 34, merge_time: 6400, ... }]
+  batch.reviews # => [{ id: 54, reviewer: "balvig", approval: true, ... }]
+  batch.review_requests # => [{ id: 74, reviewer: "balvig", ... }]
 end
 ```
+
+Hub Link will loop through the API in batches of 2 weeks at a time.
 
 ## Contributing
 
@@ -32,4 +35,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/[USERN
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-

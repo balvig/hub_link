@@ -32,6 +32,7 @@ module Mergometer
 
       def logger
         logger = Logger.new(STDOUT)
+        logger.formatter = ->(_, datetime, _, msg) { "#{datetime.to_s(:db)} - #{msg}\n" }
         logger.level = Logger::INFO
         logger
       end
