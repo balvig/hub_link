@@ -1,9 +1,10 @@
 require "octokit"
-require "mergometer/core_ext/float"
-require "mergometer/api/review"
-require "mergometer/api/review_request"
+require "hub_link/core_ext/float"
+require "hub_link/api/review"
+require "hub_link/api/review_request"
+require "hub_link/slicer"
 
-module Mergometer
+module HubLink
   module Api
     class PullRequest < SimpleDelegator
       def self.search(filter)
@@ -62,6 +63,10 @@ module Mergometer
 
       def labels
         @_labels ||= Octokit.labels_for_issue(repo, number).map(&:name).join(", ")
+      end
+
+      def to_h
+        Slicer.new(self, columns: %i(id number created_at closed_at approval_time time_to_first_review merge_time body_size additions review_count submitter straight_approval? labels repo)).to_h
       end
 
       private

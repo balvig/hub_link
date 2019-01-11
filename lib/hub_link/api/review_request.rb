@@ -1,4 +1,4 @@
-module Mergometer
+module HubLink
   module Api
     class ReviewRequest
       attr_reader :created_at, :user, :id
@@ -11,6 +11,10 @@ module Mergometer
 
       def reviewer
         user.login
+      end
+
+      def to_h
+        Slicer.new(self, columns: %i(id user created_at reviewer)).to_h
       end
     end
   end

@@ -2,7 +2,7 @@ require "faraday/detailed_logger"
 require "faraday_middleware"
 require "active_support"
 
-module Mergometer
+module HubLink
   class Configuration
     def initialize(cache_time: 3600)
       @cache_time = cache_time
@@ -32,6 +32,7 @@ module Mergometer
 
       def logger
         logger = Logger.new(STDOUT)
+        logger.formatter = ->(_, datetime, _, msg) { "#{datetime.to_s(:db)} - #{msg}\n" }
         logger.level = Logger::INFO
         logger
       end

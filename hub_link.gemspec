@@ -1,17 +1,16 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'mergometer/version'
+require 'hub_link/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "mergometer"
-  spec.version       = Mergometer::VERSION
+  spec.name          = "hub_link"
+  spec.version       = HubLink::VERSION
   spec.authors       = ["Jens Balvig"]
   spec.email         = ["jens@balvig.com"]
 
-  spec.summary       = %q{GitHub metrics for use in OKR}
-  spec.description   = %q{GitHub metrics for use in OKR}
-  spec.homepage      = "https://github.com/balvig/mergometer"
+  spec.summary       = %q{Fetch raw data from GitHub for metrics}
+  spec.homepage      = "https://github.com/balvig/hub_link"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
@@ -27,7 +26,6 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "activerecord"
   spec.add_dependency "activesupport"
   spec.add_dependency "dotenv"
   spec.add_dependency "faraday_middleware"

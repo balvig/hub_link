@@ -1,34 +1,37 @@
-# Mergometer
+# Hub Link
 
-Developer Metrics from GitHub
+When you just want the loop through all the raw pull request and review data from GitHub
+(for exporting metrics f.ex).
 
 ## Usage
 
-You can either:
-- Clone this repository.
-- Install the gem.
+Add this line to your application's Gemfile:
 
-### Cloning this repository
-```
-git clone https://github.com/balvig/mergometer.git
-cd mergometer
-bundle
-OCTOKIT_ACCESS_TOKEN=<token> bundle exec exe/mergometer <github_organization/repo_name>
+ ```ruby
+ gem "hub_store"
 ```
 
-### Installing this gem
-_This will work only after the gem gets published to RubyGems._
+Then you can do:
+
+```ruby
+REPOS = "balvig/hub_link,balvig/hub_store"
+
+stream = HubLink::Stream.new(REPOS, start_date: 3.months.ago)
+
+stream.in_batches do |batch|
+  batch.prs # => [{ id: 34, merge_time: 6400, ... }]
+  batch.reviews # => [{ id: 54, reviewer: "balvig", approval: true, ... }]
+  batch.review_requests # => [{ id: 74, reviewer: "balvig", ... }]
+end
 ```
-gem install mergometer
-OCTOKIT_ACCESS_TOKEN=<token> mergometer <github_organization/repo_name>
-```
+
+Hub Link will loop through the API in batches of 2 weeks at a time.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/mergometer. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/balvig/hub_link. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
