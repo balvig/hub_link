@@ -3,7 +3,7 @@ require "hub_link/batch"
 
 module HubLink
   class Stream
-    GITHUB_BATCH_SIZE = 14
+    GITHUB_BATCH_SIZE = 1 # Day
 
     def initialize(repo, start_date: 2.years.ago)
       @repo = repo

@@ -23,7 +23,7 @@ stream.in_batches do |batch|
 end
 ```
 
-Hub Link will loop through the API in batches of 2 weeks at a time.
+Hub Link will loop through the API in batches of 1 day at a time.
 
 ## Contributing
 

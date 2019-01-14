@@ -1,5 +1,7 @@
 module HubLink
   class Batch
+    attr_reader :query
+
     def initialize(query)
       @query = query
     end
@@ -17,8 +19,6 @@ module HubLink
     end
 
     private
-
-      attr_reader :query
 
       def results
         @_results ||= Api::PullRequest.search(query)
