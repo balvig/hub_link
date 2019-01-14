@@ -4,5 +4,5 @@ require "hub_link/stream"
 require "hub_link/version"
 
 module HubLink
-  Configuration.new(cache_time: 72 * 3600).apply
+  Configuration.new.apply
 end

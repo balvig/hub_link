@@ -4,10 +4,6 @@ require "active_support"
 
 module HubLink
   class Configuration
-    def initialize(cache_time: 3600)
-      @cache_time = cache_time
-    end
-
     def apply
       Octokit.middleware = middleware
       Octokit.auto_paginate = true
@@ -20,14 +16,9 @@ module HubLink
       def middleware
         Faraday::RackBuilder.new do |builder|
           builder.response :detailed_logger, logger
-          builder.response :caching, cache
           builder.use Octokit::Response::RaiseError
           builder.adapter Faraday.default_adapter
         end
-      end
-
-      def cache
-        ActiveSupport::Cache::FileStore.new "tmp/cache", expires_in: cache_time
       end
 
       def logger
