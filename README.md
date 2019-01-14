@@ -14,9 +14,7 @@ Add this line to your application's Gemfile:
 Then you can do:
 
 ```ruby
-REPOS = "balvig/hub_link,balvig/hub_store"
-
-stream = HubLink::Stream.new(REPOS, start_date: 3.months.ago)
+stream = HubLink::Stream.new("balvig/hub_link", start_date: 3.months.ago)
 
 stream.in_batches do |batch|
   batch.prs # => [{ id: 34, merge_time: 6400, ... }]
