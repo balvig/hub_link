@@ -16,6 +16,7 @@ module HubLink
       def middleware
         Faraday::RackBuilder.new do |builder|
           builder.response :detailed_logger, logger
+          builder.request :retry
           builder.use Octokit::Response::RaiseError
           builder.adapter Faraday.default_adapter
         end
