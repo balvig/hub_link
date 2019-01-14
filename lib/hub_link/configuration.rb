@@ -22,7 +22,7 @@ module HubLink
       end
 
       def logger
-        logger = Logger.new(STDOUT)
+        logger = Logger.new("hub_link.log")
         logger.formatter = ->(_, datetime, _, msg) { "#{datetime.to_s(:db)} - #{msg}\n" }
         logger.level = Logger::INFO
         logger
