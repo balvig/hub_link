@@ -11,3 +11,4 @@
 !/tmp/.gitkeep
 .env
 .ruby-version
+*.log

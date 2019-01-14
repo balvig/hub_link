@@ -1,3 +1,5 @@
+require "active_support/core_ext/hash"
+
 module HubLink
   class Slicer
     def initialize(record, columns: [])
@@ -6,13 +8,21 @@ module HubLink
     end
 
     def to_h
-      columns.inject({}) do |result, column|
-        result.merge(column => record.public_send(column))
-      end
+      normalized_attributes
     end
 
     private
 
       attr_reader :record, :columns
+
+      def normalized_attributes
+        raw_attributes.transform_keys { |key| key.to_s.chomp("?").to_sym }
+      end
+
+      def raw_attributes
+        columns.inject({}) do |result, column|
+          result.merge(column => record.public_send(column))
+        end
+      end
   end
 end
