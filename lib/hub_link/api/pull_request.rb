@@ -11,6 +11,10 @@ module HubLink
         Octokit.search_issues(filter).items.map { |item| new(item) }
       end
 
+      def self.oldest(repo:)
+        search("type:pr sort:updated-asc repo:#{repo}").first
+      end
+
       def submitter
         user.login
       end
