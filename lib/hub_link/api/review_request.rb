@@ -1,20 +1,17 @@
 module HubLink
   module Api
     class ReviewRequest
-      attr_reader :created_at, :user, :id
+      attr_reader :id, :reviewer, :requester, :created_at
 
-      def initialize(id:, created_at:, user:)
+      def initialize(id:, reviewer:, requester:, created_at:)
         @id = id
+        @reviewer = reviewer
+        @requester = requester
         @created_at = created_at
-        @user = user
-      end
-
-      def reviewer
-        user.login
       end
 
       def to_h
-        Slicer.new(self, columns: %i(id user created_at reviewer)).to_h
+        Slicer.new(self, columns: %i(id reviewer requester created_at)).to_h
       end
     end
   end

@@ -17,7 +17,7 @@ module HubLink
 
       def submitter
         user.login
-      end
+     end
 
       def reviews
         @_reviews ||= fetch_reviews
@@ -82,8 +82,8 @@ module HubLink
         def fetch_review_requests
           requests = Octokit.pull_request_review_requests(repo, number)
 
-          requests.users.compact.map do |user|
-            ReviewRequest.new(id: id, created_at: created_at, user: user)
+          requests.users.compact.map do |reviewer|
+            ReviewRequest.new(id: id, created_at: created_at, reviewer: reviewer.login, requester: submitter)
           end
         end
 
