@@ -11,5 +11,12 @@ module HubLink::Api
 
       assert_equal "balvig", pr.review_requests.first.requester
     end
+
+    def test_reviews
+      pr = PullRequest.search("type:pr 12 repo:balvig/hub_link").first
+
+      review = pr.reviews.first
+      require 'pry'; binding.pry
+    end
   end
 end
