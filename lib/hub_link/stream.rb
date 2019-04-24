@@ -26,7 +26,7 @@ module HubLink
 
       def queries
         start_date.step(end_date, GITHUB_BATCH_SIZE).map do |date|
-          "type:pr updated:#{date}..#{date + GITHUB_BATCH_SIZE} repo:#{repo}"
+          "type:pr updated:#{date}..#{date + (GITHUB_BATCH_SIZE - 1)} repo:#{repo}"
         end
       end
 
