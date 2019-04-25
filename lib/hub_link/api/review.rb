@@ -4,7 +4,7 @@ module HubLink
       BOTS = %w(houndci-bot cookpad-devel)
 
       def reviewer
-        user.login
+        user&.login
       end
 
       def approval?
@@ -22,7 +22,7 @@ module HubLink
       private
 
         def bot?
-          BOTS.include?(user.login)
+          BOTS.include?(reviewer)
         end
 
         def driveby?
