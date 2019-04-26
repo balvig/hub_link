@@ -83,7 +83,7 @@ module HubLink
           requests = Octokit.pull_request_review_requests(repo, number)
 
           requests.users.compact.map do |reviewer|
-            ReviewRequest.new(id: id, created_at: created_at, reviewer: reviewer.login, requester: submitter, pull_request_id: id)
+            ReviewRequest.new(created_at: created_at, reviewer: reviewer.login, requester: submitter, pull_request_id: id)
           end
         end
 
