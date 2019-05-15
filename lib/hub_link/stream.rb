@@ -3,11 +3,10 @@ require "hub_link/batch"
 
 module HubLink
   class Stream
-    GITHUB_BATCH_SIZE = 7 # Days
-
-    def initialize(repo, start_date: nil)
+    def initialize(repo, start_date: nil, batch_size: 7)
       @repo = repo
       @start_date = (start_date || date_of_first_pr).to_date
+      @batch_size = batch_size
     end
 
     def in_batches(&block)
@@ -18,15 +17,15 @@ module HubLink
 
     private
 
-      attr_accessor :repo, :start_date
+      attr_accessor :repo, :start_date, :batch_size
 
       def date_of_first_pr
         Api::PullRequest.oldest(repo: repo)&.updated_at
       end
 
       def queries
-        start_date.step(end_date, GITHUB_BATCH_SIZE).map do |date|
-          "type:pr updated:#{date}..#{date + (GITHUB_BATCH_SIZE - 1)} repo:#{repo}"
+        start_date.step(end_date, batch_size).map do |date|
+          "type:pr updated:#{date}..#{date + (batch_size - 1)} repo:#{repo}"
         end
       end
 

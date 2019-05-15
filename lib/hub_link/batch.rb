@@ -6,6 +6,10 @@ module HubLink
       @query = query
     end
 
+    def fetch(resource)
+      public_send(resource)
+    end
+
     def pull_requests
       results.map(&:to_h)
     end
