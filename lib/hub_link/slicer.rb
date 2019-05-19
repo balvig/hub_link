@@ -8,7 +8,7 @@ module HubLink
     end
 
     def to_h
-      normalized_attributes
+      normalized_attributes.with_indifferent_access
     end
 
     private

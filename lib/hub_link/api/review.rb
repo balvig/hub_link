@@ -12,25 +12,17 @@ module HubLink
       end
 
       def invalid?
-        bot? || driveby? || draft?
+        bot?
       end
 
       def to_h
-        Slicer.new(self, columns: %i(id pull_request_id submitted_at reviewer approval?)).to_h
+        Slicer.new(self, columns: %i(id pull_request_id submitted_at reviewer approval? state)).to_h
       end
 
       private
 
         def bot?
           BOTS.include?(reviewer)
-        end
-
-        def driveby?
-          state == "COMMENTED"
-        end
-
-        def draft?
-          state == "PENDING"
         end
     end
   end
