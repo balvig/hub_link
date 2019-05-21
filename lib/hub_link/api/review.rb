@@ -21,8 +21,22 @@ module HubLink
 
       private
 
+        def submitted_at
+          if submitted?
+            super
+          end
+        end
+
         def bot?
           BOTS.include?(reviewer)
+        end
+
+        def draft?
+          state == "PENDING"
+        end
+
+        def submitted?
+          !draft?
         end
     end
   end
