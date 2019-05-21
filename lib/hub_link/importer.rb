@@ -10,10 +10,9 @@ module HubLink
       new(*args, &block).run
     end
 
-    def initialize(repo:, start_date:, batch_size: 7, resources:, &block)
+    def initialize(repo:, start_date:, resources:, &block)
       @repo = repo.to_s
       @start_date = start_date
-      @batch_size = batch_size
       @resources = resources
       @callbacks = Callbacks.new(block)
     end
@@ -32,7 +31,7 @@ module HubLink
 
     private
 
-      attr_reader :repo, :start_date, :batch_size, :resources, :callbacks
+      attr_reader :repo, :start_date, :resources, :callbacks
 
       def import(records, to:)
         records.each do |row|
@@ -41,7 +40,7 @@ module HubLink
       end
 
       def stream
-        @_stream ||= Stream.new(repo, start_date: start_date, batch_size: batch_size)
+        @_stream ||= Stream.new(repo, start_date: start_date)
       end
   end
 end
