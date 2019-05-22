@@ -17,9 +17,9 @@ Then you can do:
 stream = HubLink::Stream.new("balvig/hub_link", start_date: 3.months.ago)
 
 stream.in_batches do |batch|
-  batch.prs # => [{ id: 34, merge_time: 6400, ... }]
-  batch.reviews # => [{ id: 54, reviewer: "balvig", approval: true, ... }]
   batch.review_requests # => [{ digest: "a45bfa...", reviewer: "balvig", ... }]
+  batch.reviews # => [{ id: 54, reviewer: "balvig", approval: true, ... }]
+  batch.prs # => [{ id: 34, merge_time: 6400, ... }]
 end
 ```
 
