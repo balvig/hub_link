@@ -7,12 +7,13 @@ require "hub_link/slicer"
 module HubLink
   module Api
     class PullRequest < SimpleDelegator
-      def self.search(filter)
+      def self.search(filter, auto_paginate: true)
+        Octokit.auto_paginate = auto_paginate
         Octokit.search_issues(filter).items.map { |item| new(item) }
       end
 
       def self.oldest(repo:)
-        search("type:pr sort:updated-asc repo:#{repo}").first
+        search("type:pr sort:updated-asc repo:#{repo}", auto_paginate: false).first
       end
 
       def submitter
@@ -100,7 +101,7 @@ module HubLink
         end
 
         def first_review
-          reviews.first
+          reviews.find(&:submitted?)
         end
 
         def extended_data

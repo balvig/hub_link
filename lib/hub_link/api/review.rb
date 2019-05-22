@@ -15,17 +15,21 @@ module HubLink
         bot?
       end
 
+      def submitted?
+        !draft?
+      end
+
+      def submitted_at
+        if submitted?
+          super
+        end
+      end
+
       def to_h
         Slicer.new(self, columns: %i(id pull_request_id submitted_at reviewer approval? state)).to_h
       end
 
       private
-
-        def submitted_at
-          if submitted?
-            super
-          end
-        end
 
         def bot?
           BOTS.include?(reviewer)
@@ -33,10 +37,6 @@ module HubLink
 
         def draft?
           state == "PENDING"
-        end
-
-        def submitted?
-          !draft?
         end
     end
   end

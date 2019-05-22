@@ -10,8 +10,9 @@ module HubLink
     end
 
     def in_batches(&block)
-      queries.each do |query|
-        yield Batch.new(query)
+      start_date.step(end_date, batch_size) do |date|
+        range = "#{date}..#{date + (batch_size - 1)}"
+        yield Batch.new "type:pr updated:#{range} repo:#{repo}"
       end
     end
 
@@ -23,14 +24,8 @@ module HubLink
         Api::PullRequest.oldest(repo: repo)&.updated_at
       end
 
-      def queries
-        start_date.step(end_date, batch_size).map do |date|
-          "type:pr updated:#{date}..#{date + (batch_size - 1)} repo:#{repo}"
-        end
-      end
-
       def end_date
-        Date.tomorrow
+        @_end_date ||= Date.tomorrow
       end
   end
 end
