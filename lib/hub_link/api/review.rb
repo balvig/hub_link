@@ -1,7 +1,15 @@
 module HubLink
   module Api
     class Review < SimpleDelegator
-      BOTS = %w(houndci-bot cookpad-devel)
+      EXPORT_COLUMNS = %i(
+        id
+        pull_request_id
+        submitted_at
+        reviewer
+        approval?
+        state
+        html_url
+      )
 
       def reviewer
         user&.login
@@ -9,10 +17,6 @@ module HubLink
 
       def approval?
         state == "APPROVED"
-      end
-
-      def invalid?
-        bot?
       end
 
       def submitted?
@@ -26,14 +30,10 @@ module HubLink
       end
 
       def to_h
-        Slicer.new(self, columns: %i(id pull_request_id submitted_at reviewer approval? state html_url)).to_h
+        Slicer.new(self, columns: EXPORT_COLUMNS).to_h
       end
 
       private
-
-        def bot?
-          BOTS.include?(reviewer)
-        end
 
         def draft?
           state == "PENDING"

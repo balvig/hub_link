@@ -7,9 +7,30 @@ require "hub_link/slicer"
 module HubLink
   module Api
     class PullRequest < SimpleDelegator
+      EXPORT_COLUMNS = %i(
+        id
+        title
+        number
+        created_at
+        updated_at
+        closed_at
+        approval_time
+        time_to_first_review
+        merge_time
+        body_size
+        additions
+        review_count
+        submitter
+        straight_approval?
+        labels
+        repo
+        html_url
+        state
+      )
+
       def self.search(filter, auto_paginate: true)
         Octokit.auto_paginate = auto_paginate
-        Octokit.search_issues(filter).items.map { |item| new(item) }
+        Octokit.search_issues(filter).items.map { |item| new(item) } # check outhttp://octokit.github.io/octokit.rb/Octokit/Client/PullRequests.html#pull_requests-instance_method
       end
 
       def self.oldest(repo:)
@@ -18,7 +39,7 @@ module HubLink
 
       def submitter
         user.login
-     end
+      end
 
       def reviews
         @_reviews ||= fetch_reviews
@@ -71,7 +92,7 @@ module HubLink
       end
 
       def to_h
-        Slicer.new(self, columns: %i(id number created_at updated_at closed_at approval_time time_to_first_review merge_time body_size additions review_count submitter straight_approval? labels repo html_url)).to_h
+        Slicer.new(self, columns: EXPORT_COLUMNS).to_h
       end
 
       private
@@ -93,7 +114,7 @@ module HubLink
             data.pull_request_id = id
             data.number = number
             Review.new(data)
-          end.reject(&:invalid?)
+          end
         end
 
         def first_approval
