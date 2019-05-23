@@ -26,7 +26,7 @@ module HubLink
       end
 
       def to_h
-        Slicer.new(self, columns: %i(id pull_request_id submitted_at reviewer approval? state)).to_h
+        Slicer.new(self, columns: %i(id pull_request_id submitted_at reviewer approval? state html_url)).to_h
       end
 
       private
