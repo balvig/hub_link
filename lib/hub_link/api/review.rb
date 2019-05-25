@@ -7,6 +7,7 @@ module HubLink
         submitted_at
         reviewer
         approval?
+        reply?
         state
         html_url
       )
@@ -17,6 +18,10 @@ module HubLink
 
       def approval?
         state == "APPROVED"
+      end
+
+      def reply?
+        reviewer == submitter
       end
 
       def submitted?
