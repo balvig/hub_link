@@ -6,6 +6,7 @@ module HubLink
   class Configuration
     def apply
       Octokit.middleware = middleware
+      Octokit.auto_paginate = false
     end
 
     private

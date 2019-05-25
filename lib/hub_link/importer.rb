@@ -19,7 +19,7 @@ module HubLink
 
     def run
       stream.in_batches do |batch|
-        callback(:init, batch.query)
+        callback(:init, batch.options)
 
         resources.each do |source, target|
           callback(:start, source)

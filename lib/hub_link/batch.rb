@@ -1,9 +1,13 @@
 module HubLink
   class Batch
-    attr_reader :query
+    attr_reader :options
 
-    def initialize(query)
-      @query = query
+    def initialize(options = {})
+      @options = options
+    end
+
+    def empty?
+      results.empty?
     end
 
     def fetch(resource)
@@ -25,7 +29,7 @@ module HubLink
     private
 
       def results
-        @_results ||= Api::PullRequest.search(query)
+        @_results ||= Api::PullRequest.list(options)
       end
   end
 end

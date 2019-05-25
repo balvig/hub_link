@@ -28,13 +28,15 @@ module HubLink
         state
       )
 
-      def self.search(filter, auto_paginate: true)
-        Octokit.auto_paginate = auto_paginate
-        Octokit.search_issues(filter).items.map { |item| new(item) } # check outhttp://octokit.github.io/octokit.rb/Octokit/Client/PullRequests.html#pull_requests-instance_method
+      def self.list(repo:, since:, page: )
+        Octokit.list_issues(repo, since: since, page: page, sort: "updated", direction: "asc", state: "all").map do |item|
+          item.repo = repo
+          new(item)
+        end.find_all(&:pull_request?)
       end
 
-      def self.oldest(repo:)
-        search("type:pr sort:updated-asc repo:#{repo}", auto_paginate: false).first
+      def pull_request?
+        respond_to?(:pull_request)
       end
 
       def submitter
@@ -83,12 +85,8 @@ module HubLink
         reviews.size
       end
 
-      def repo
-        extended_data.base.repo.full_name
-      end
-
       def labels
-        @_labels ||= Octokit.labels_for_issue(repo, number).map(&:name).join(", ")
+        super.map(&:name).join(", ")
       end
 
       def to_h
