@@ -3,15 +3,15 @@ require "hub_link/batch"
 
 module HubLink
   class Stream
-    def initialize(repo, start_date: nil)
+    def initialize(repo, since: nil)
       @repo = repo
-      @start_date = start_date&.to_date
+      @since = since&.to_date
     end
 
     def in_batches(&block)
       page = 1
       loop do
-        batch = Batch.new(repo: repo, since: start_date, page: page)
+        batch = Batch.new(repo: repo, since: since, page: page)
         break if batch.empty?
         yield batch
         page += 1
@@ -20,6 +20,6 @@ module HubLink
 
     private
 
-      attr_accessor :repo, :start_date
+      attr_accessor :repo, :since
   end
 end

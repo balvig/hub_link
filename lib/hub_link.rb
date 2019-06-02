@@ -4,5 +4,15 @@ require "hub_link/stream"
 require "hub_link/version"
 
 module HubLink
-  Configuration.new.apply
+  START = "HubLink::Started"
+  UPDATE = "HubLink::Update"
+  FINISH = "HubLink::Finished"
+
+  class << self
+    attr_accessor :config
+
+    delegate :logger, to: :config
+  end
+
+  self.config = Configuration.new
 end

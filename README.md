@@ -14,7 +14,7 @@ Add this line to your application's Gemfile:
 Then you can do:
 
 ```ruby
-stream = HubLink::Stream.new("balvig/hub_link", start_date: 3.months.ago)
+stream = HubLink::Stream.new("balvig/hub_link", since: 3.months.ago)
 
 stream.in_batches do |batch|
   batch.review_requests # => [{ digest: "a45bfa...", reviewer: "balvig", ... }]
@@ -23,8 +23,7 @@ stream.in_batches do |batch|
 end
 ```
 
-Hub Link will loop through the API in batches of 7 days at a time from
-the start date.
+Hub Link will loop through the API one page at a time.
 
 ## Contributing
 
