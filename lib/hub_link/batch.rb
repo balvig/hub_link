@@ -1,3 +1,6 @@
+require "pastel"
+require "hub_link/api/pull_request"
+
 module HubLink
   class Batch
     attr_reader :options
@@ -42,18 +45,26 @@ module HubLink
         logger.info(START) { title }
 
         block.call.tap do |results|
-          logger.info(FINISH) { "Found #{results.size}" }
+          logger.info(FINISH) { pastel.green("Found #{results.size}") }
         end
       end
 
       def fetch_results
-        log "Getting page: #{options.values.join(', ')}" do
+        log pastel.bold("Getting PRs: #{formatted_options}") do
           Api::PullRequest.list(options)
         end
       end
 
+      def formatted_options
+        options.values.join(", ")
+      end
+
       def logger
         HubLink.logger
+      end
+
+      def pastel
+        @_pastel ||= Pastel.new
       end
   end
 end

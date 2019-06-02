@@ -1,4 +1,3 @@
-require "hub_link"
 require "hub_link/insert"
 
 module HubLink
@@ -15,7 +14,6 @@ module HubLink
 
     def run
       stream.in_batches do |batch|
-
         resources.each do |source, target|
           import batch.fetch(source), to: target
         end
@@ -26,21 +24,14 @@ module HubLink
 
       attr_reader :repo, :since, :resources
 
-      def import(records, to:)
-        logger.info(START) { "Storing" }
-
-        records.each do |row|
-          Insert.new(row: row, target: to).run
-        end
-        logger.info(FINISH) { "Total: #{to.count}" }
-      end
-
       def stream
         @_stream ||= Stream.new(repo, since: since)
       end
 
-      def logger
-        HubLink.logger
+      def import(records, to:)
+        records.each do |row|
+          Insert.new(row: row, target: to).run
+        end
       end
   end
 end

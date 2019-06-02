@@ -1,4 +1,3 @@
-require "hub_link/api/pull_request"
 require "hub_link/batch"
 
 module HubLink

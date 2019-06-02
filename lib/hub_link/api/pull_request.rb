@@ -1,4 +1,3 @@
-require "octokit"
 require "hub_link/core_ext/float"
 require "hub_link/api/review"
 require "hub_link/api/review_request"

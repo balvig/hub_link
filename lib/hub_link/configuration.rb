@@ -1,8 +1,8 @@
+require "octokit"
 require "faraday_middleware"
 require "active_support"
 require "hub_link/simple_logger"
-require "hub_link/api_logging"
-
+require "hub_link/api/logging"
 
 module HubLink
   class Configuration
@@ -20,7 +20,7 @@ module HubLink
 
       def middleware
         Faraday::RackBuilder.new do |builder|
-          builder.use ApiLogging
+          builder.use Api::Logging
           builder.request :retry
           builder.use Octokit::Response::RaiseError
           builder.adapter Faraday.default_adapter

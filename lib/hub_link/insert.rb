@@ -1,7 +1,5 @@
 module HubLink
   class Insert
-    delegate :primary_key, to: :target
-
     def initialize(row:, target:)
       @row = row
       @target = target
@@ -19,6 +17,10 @@ module HubLink
 
       def primary_key_value
         row[primary_key]
+      end
+
+      def primary_key
+        target.primary_key
       end
 
       def importable_attributes
