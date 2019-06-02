@@ -1,46 +1,46 @@
 require "hub_link"
-require "hub_link/callbacks"
 require "hub_link/insert"
 
 module HubLink
   class Importer
-    delegate :callback, to: :callbacks
-
-    def self.run(*args, &block)
-      new(*args, &block).run
+    def self.run(*args)
+      new(*args).run
     end
 
-    def initialize(repo:, start_date:, resources:, &block)
+    def initialize(repo:, since:, resources:)
       @repo = repo.to_s
-      @start_date = start_date
+      @since = since
       @resources = resources
-      @callbacks = Callbacks.new(block)
     end
 
     def run
       stream.in_batches do |batch|
-        callback(:init, batch.options)
 
         resources.each do |source, target|
-          callback(:start, source)
           import batch.fetch(source), to: target
-          callback(:finish, target.count)
         end
       end
     end
 
     private
 
-      attr_reader :repo, :start_date, :resources, :callbacks
+      attr_reader :repo, :since, :resources
 
       def import(records, to:)
+        logger.info(START) { "Storing" }
+
         records.each do |row|
           Insert.new(row: row, target: to).run
         end
+        logger.info(FINISH) { "Total: #{to.count}" }
       end
 
       def stream
-        @_stream ||= Stream.new(repo, start_date: start_date)
+        @_stream ||= Stream.new(repo, since: since)
+      end
+
+      def logger
+        HubLink.logger
       end
   end
 end

@@ -3,7 +3,7 @@ module HubLink
     attr_reader :options
 
     def initialize(options = {})
-      @options = options
+      @options = options.compact
     end
 
     def empty?
@@ -15,21 +15,45 @@ module HubLink
     end
 
     def pull_requests
-      results.map(&:to_h)
+      log "Fetching pull requests" do
+        results.map(&:to_h)
+      end
     end
 
     def reviews
-      results.flat_map(&:reviews).map(&:to_h)
+      log "Fetching reviews" do
+        results.flat_map(&:reviews).map(&:to_h)
+      end
     end
 
     def review_requests
-      results.flat_map(&:review_requests).map(&:to_h)
+      log "Fetching review requests" do
+        results.flat_map(&:review_requests).map(&:to_h)
+      end
     end
 
     private
 
       def results
-        @_results ||= Api::PullRequest.list(options)
+        @_results ||= fetch_results
+      end
+
+      def log(title, &block)
+        logger.info(START) { title }
+
+        block.call.tap do |results|
+          logger.info(FINISH) { "Found #{results.size}" }
+        end
+      end
+
+      def fetch_results
+        log "Getting page: #{options.values.join(', ')}" do
+          Api::PullRequest.list(options)
+        end
+      end
+
+      def logger
+        HubLink.logger
       end
   end
 end

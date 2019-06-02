@@ -14,12 +14,14 @@ module HubLink
         created_at
         updated_at
         closed_at
+        merged_at
         approval_time
         time_to_first_review
         merge_time
         body_size
         additions
-        review_count
+        comments_count
+        review_comments_count
         submitter
         straight_approval?
         labels
@@ -28,8 +30,8 @@ module HubLink
         state
       )
 
-      def self.list(repo:, since:, page: )
-        Octokit.list_issues(repo, since: since, page: page, sort: "updated", direction: "asc", state: "all").map do |item|
+      def self.list(repo:, page:, **options)
+        Octokit.list_issues(repo, options.merge(page: page, sort: "updated", direction: "asc", state: "all")).map do |item|
           item.repo = repo
           new(item)
         end.find_all(&:pull_request?)
@@ -62,7 +64,7 @@ module HubLink
       def merge_time
         return unless merged?
 
-        (closed_at - created_at).in_hours
+        (merged_at - created_at).in_hours
       end
 
       def time_to_first_review
@@ -81,8 +83,16 @@ module HubLink
         reviews.all?(&:approval?)
       end
 
-      def review_count
-        reviews.size
+      def merged_at
+        extended_data.merged_at
+      end
+
+      def comments_count
+        extended_data.comments
+      end
+
+      def review_comments_count
+        extended_data.review_comments
       end
 
       def labels
@@ -96,7 +106,7 @@ module HubLink
       private
 
         def merged?
-          closed_at.present?
+          merged_at.present?
         end
 
         def fetch_review_requests

@@ -10,6 +10,7 @@ module HubLink
         reply?
         state
         html_url
+        body
       )
 
       def reviewer

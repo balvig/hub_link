@@ -1,10 +1,15 @@
-require "faraday/detailed_logger"
 require "faraday_middleware"
 require "active_support"
+require "hub_link/simple_logger"
+require "hub_link/api_logging"
+
 
 module HubLink
   class Configuration
-    def apply
+    attr_accessor :logger
+
+    def initialize
+      self.logger = SimpleLogger.new
       Octokit.middleware = middleware
       Octokit.auto_paginate = false
     end
@@ -15,18 +20,11 @@ module HubLink
 
       def middleware
         Faraday::RackBuilder.new do |builder|
-          builder.response :detailed_logger, logger
+          builder.use ApiLogging
           builder.request :retry
           builder.use Octokit::Response::RaiseError
           builder.adapter Faraday.default_adapter
         end
-      end
-
-      def logger
-        logger = Logger.new("hub_link.log")
-        logger.formatter = ->(_, datetime, _, msg) { "#{datetime.to_s(:db)} - #{msg}\n" }
-        logger.level = Logger::INFO
-        logger
       end
   end
 end
