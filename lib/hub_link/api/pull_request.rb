@@ -16,7 +16,6 @@ module HubLink
         merged_at
         approval_time
         time_to_first_review
-        merge_time
         body_size
         additions
         comments_count
@@ -58,12 +57,6 @@ module HubLink
 
       def body_size
         body.to_s.size
-      end
-
-      def merge_time
-        return unless merged?
-
-        (merged_at - created_at).in_hours
       end
 
       def time_to_first_review
