@@ -6,6 +6,7 @@ module HubLink
         pull_request_id
         submitted_at
         reviewer
+        reply?
         state
         html_url
         body
@@ -13,6 +14,10 @@ module HubLink
 
       def reviewer
         user&.login
+      end
+
+      def reply?
+        reviewer == submitter
       end
 
       def submitted_at
