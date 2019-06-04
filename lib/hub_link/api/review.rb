@@ -6,8 +6,6 @@ module HubLink
         pull_request_id
         submitted_at
         reviewer
-        approval?
-        reply?
         state
         html_url
         body
@@ -15,18 +13,6 @@ module HubLink
 
       def reviewer
         user&.login
-      end
-
-      def approval?
-        state == "APPROVED"
-      end
-
-      def reply?
-        reviewer == submitter
-      end
-
-      def submitted?
-        !draft?
       end
 
       def submitted_at
@@ -40,6 +26,10 @@ module HubLink
       end
 
       private
+
+        def submitted?
+          !draft?
+        end
 
         def draft?
           state == "PENDING"
