@@ -14,14 +14,11 @@ module HubLink
         updated_at
         closed_at
         merged_at
-        approval_time
-        time_to_first_review
         body_size
         additions
         comments_count
         review_comments_count
         submitter
-        straight_approval?
         labels
         repo
         html_url
@@ -32,7 +29,7 @@ module HubLink
         Octokit.list_issues(repo, options.merge(page: page, sort: "updated", direction: "asc", state: "all")).map do |item|
           item.repo = repo
           new(item)
-        end.find_all(&:pull_request?)
+        end
       end
 
       def pull_request?
@@ -57,22 +54,6 @@ module HubLink
 
       def body_size
         body.to_s.size
-      end
-
-      def time_to_first_review
-        return if first_review.blank?
-
-        (first_review.submitted_at - created_at).in_hours
-      end
-
-      def approval_time
-        return if first_approval.blank?
-
-        (first_approval.submitted_at - created_at).in_hours
-      end
-
-      def straight_approval?
-        reviews.all?(&:approval?)
       end
 
       def merged_at

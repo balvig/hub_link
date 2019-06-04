@@ -6,6 +6,7 @@ require "hub_link/api/logging"
 
 module HubLink
   class Configuration
+    RETRY_ON = Faraday::Request::Retry::DEFAULT_EXCEPTIONS + [Octokit::BadGateway]
     attr_accessor :logger
 
     def initialize
@@ -21,7 +22,7 @@ module HubLink
       def middleware
         Faraday::RackBuilder.new do |builder|
           builder.use Api::Logging
-          builder.request :retry
+          builder.request :retry, exceptions: RETRY_ON
           builder.use Octokit::Response::RaiseError
           builder.adapter Faraday.default_adapter
         end

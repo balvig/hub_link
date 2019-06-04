@@ -1,4 +1,3 @@
-require "pastel"
 require "hub_link/api/pull_request"
 
 module HubLink
@@ -19,39 +18,43 @@ module HubLink
 
     def pull_requests
       log "Fetching pull requests" do
-        results.map(&:to_h)
+        pull_request_results.find_all(&:pull_request?).map(&:to_h)
       end
     end
 
     def reviews
       log "Fetching reviews" do
-        results.flat_map(&:reviews).map(&:to_h)
+        pull_request_results.flat_map(&:reviews).map(&:to_h)
       end
     end
 
     def review_requests
       log "Fetching review requests" do
-        results.flat_map(&:review_requests).map(&:to_h)
+        pull_request_results.flat_map(&:review_requests).map(&:to_h)
       end
     end
 
     private
 
+      def pull_request_results
+        results.find_all(&:pull_request?)
+      end
+
       def results
         @_results ||= fetch_results
+      end
+
+      def fetch_results
+        log "*Getting issues* #{formatted_options}" do
+          Api::PullRequest.list(options)
+        end
       end
 
       def log(title, &block)
         logger.info(START) { title }
 
         block.call.tap do |results|
-          logger.info(FINISH) { pastel.green("Found #{results.size}") }
-        end
-      end
-
-      def fetch_results
-        log pastel.bold("Getting PRs: #{formatted_options}") do
-          Api::PullRequest.list(options)
+          logger.info(FINISH) { "Found #{results.size}" }
         end
       end
 
@@ -61,10 +64,6 @@ module HubLink
 
       def logger
         HubLink.logger
-      end
-
-      def pastel
-        @_pastel ||= Pastel.new
       end
   end
 end
