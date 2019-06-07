@@ -5,7 +5,7 @@ module HubLink
     def test_finding_in_batches
       require "pp"
 
-      Stream.new("cookpad/streamy").in_batches do |batch|
+      Stream.new("cookpad/streamy", since: 2.months.ago).in_batches do |batch|
         puts "\n\nReview Requests\n"
         pp batch.review_requests.first
 
@@ -14,6 +14,9 @@ module HubLink
 
         puts "\n\nPull Requests\n"
         pp batch.pull_requests.first
+
+        puts "\n\nIssues\n"
+        pp batch.issues.first
       end
     end
   end

@@ -1,4 +1,4 @@
-require "hub_link/api/pull_request"
+require "hub_link/api/issue"
 
 module HubLink
   class Batch
@@ -34,10 +34,16 @@ module HubLink
       end
     end
 
+    def issues
+      log "Fetching issues" do
+        (results - pull_request_results).map(&:to_h)
+      end
+    end
+
     private
 
       def pull_request_results
-        results.find_all(&:pull_request?)
+        @_pull_request_results ||= results.find_all(&:pull_request?)
       end
 
       def results
@@ -45,8 +51,8 @@ module HubLink
       end
 
       def fetch_results
-        log "*Getting issues* #{formatted_options}" do
-          Api::PullRequest.list(options)
+        log "*Querying issues* #{formatted_options}" do
+          Api::Issue.list(options)
         end
       end
 
