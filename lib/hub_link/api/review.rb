@@ -10,6 +10,7 @@ module HubLink
         state
         html_url
         body
+        review_comments_count
       )
 
       def reviewer
@@ -26,11 +27,19 @@ module HubLink
         end
       end
 
+      def review_comments_count
+        review_comments.size
+      end
+
       def to_h
         Slicer.new(self, columns: EXPORT_COLUMNS).to_h
       end
 
       private
+
+        def review_comments
+          @_review_comments ||= Octokit.pull_request_review_comments(repo, number, id)
+        end
 
         def submitted?
           !draft?

@@ -91,6 +91,7 @@ module HubLink
 
         def fetch_reviews
           Octokit.pull_request_reviews(repo, number).map do |data|
+            data.repo = repo
             data.pull_request_id = id
             data.number = number
             data.submitter = submitter
