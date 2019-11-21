@@ -2,22 +2,35 @@ require 'test_helper'
 
 module HubLink
   class StreamTest < Minitest::Test
-    def test_finding_in_batches
-      require "pp"
 
-      Stream.new("cookpad/streamy", since: 2.months.ago).in_batches do |batch|
-        puts "\n\nReview Requests\n"
-        pp batch.review_requests.first
+    def test_streaming_reviews
+      Stream.new("balvig/hub_link").in_batches do |batch|
+        result = batch.reviews.first
 
-        puts "\n\nReviews\n"
-        pp batch.reviews.first
-
-        puts "\n\nPull Requests\n"
-        pp batch.pull_requests.first
-
-        puts "\n\nIssues\n"
-        pp batch.issues.first
+        assert_equal 114238795, result[:id]
+        # {
+        # "id" => 114238795,
+        # "pull_request_id" => 316653904,
+        # "submitted_at" => "2018-04-23 04:05:11 UTC",
+        # "reviewer" => "balvig",
+        # "reply"=>false,
+        # "state"=>"APPROVED",
+        # "html_url"=> "https://github.com/balvig/hub_link/pull/1#pullrequestreview-114238795",
+        # "body"=>"Nice, thanks!",
+        # "review_comments_count"=>0
+        # },
+        # batch.reviews.first
       end
+    end
+
+    def test_streaming_pull_requests
+      Stream.new("balvig/hub_link").in_batches do |batch|
+        assert_equal 114238795, batch.pull_requests.first
+      end
+    end
+
+    def test_streaming_issues
+      assert_equal batch.issues.first
     end
   end
 end
