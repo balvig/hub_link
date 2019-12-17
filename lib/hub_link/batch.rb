@@ -28,12 +28,6 @@ module HubLink
       end
     end
 
-    def review_requests
-      log "Fetching review requests" do
-        pull_request_results.flat_map(&:review_requests).map(&:to_h)
-      end
-    end
-
     def issues
       log "Fetching issues" do
         (results - pull_request_results).map(&:to_h)

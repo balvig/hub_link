@@ -3,7 +3,6 @@ module HubLink
     class PullRequest < Issue
       require "hub_link/api/issue"
       require "hub_link/api/review"
-      require "hub_link/api/review_request"
 
       ADDITIONAL_EXPORT_COLUMNS = %i(
         merged_at
@@ -19,10 +18,6 @@ module HubLink
 
       def reviews
         @_reviews ||= fetch_reviews
-      end
-
-      def review_requests
-        @_review_requests ||= fetch_review_requests
       end
 
       def additions
@@ -49,12 +44,6 @@ module HubLink
 
         def export_columns
           super + ADDITIONAL_EXPORT_COLUMNS
-        end
-
-        def fetch_review_requests
-          extended_data.requested_reviewers.compact.map do |reviewer|
-            ReviewRequest.new(created_at: created_at, reviewer: reviewer.login, requester: submitter, pull_request_id: id)
-          end
         end
 
         def fetch_reviews
