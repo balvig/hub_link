@@ -25,12 +25,18 @@ module HubLink
 
     def test_streaming_pull_requests
       Stream.new("balvig/hub_link").in_batches do |batch|
-        assert_equal 114238795, batch.pull_requests.first
+        result = batch.pull_requests.first
+
+        assert_equal 316653904, result[:id]
       end
     end
 
     def test_streaming_issues
-      assert_equal batch.issues.first
+      Stream.new("balvig/hub_link").in_batches do |batch|
+        result = batch.issues.first
+
+        assert_equal 332258376, result[:id]
+      end
     end
   end
 end
