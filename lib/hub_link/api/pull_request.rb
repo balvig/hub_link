@@ -1,7 +1,6 @@
 module HubLink
   module Api
     class PullRequest < Issue
-      require "hub_link/api/issue"
       require "hub_link/api/review"
 
       ADDITIONAL_EXPORT_COLUMNS = %i(

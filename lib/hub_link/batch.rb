@@ -46,7 +46,7 @@ module HubLink
 
       def fetch_results
         log "*Querying issues* #{formatted_options}" do
-          Api::Issue.list(options)
+          Api::Issue.list(**options)
         end
       end
 

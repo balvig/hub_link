@@ -12,7 +12,9 @@ module HubLink
   class << self
     attr_accessor :config
 
-    delegate :logger, to: :config
+    def logger
+      config.logger
+    end
   end
 
   self.config = Configuration.new
